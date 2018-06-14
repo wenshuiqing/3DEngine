@@ -19,4 +19,20 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cbuffer.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vsoutput.hs">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="copy.ps">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="copy.vs">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>
