@@ -261,6 +261,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="E:\unitymaster\mulEngine\3DEngine\Framework\Common\MemoryManager.cpp" />
     <ClCompile Include="E:\unitymaster\mulEngine\3DEngine\Framework\Common\Allocator.cpp" />
     <ClCompile Include="E:\unitymaster\mulEngine\3DEngine\Framework\Common\BaseApplication.cpp" />
     <ClCompile Include="E:\unitymaster\mulEngine\3DEngine\Framework\Common\GraphicsManager.cpp" />

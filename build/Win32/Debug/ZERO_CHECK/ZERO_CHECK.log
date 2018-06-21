@@ -1,1 +1,11 @@
-﻿
+﻿  Checking Build System
+  CMake does not need to re-run because E:/unitymaster/mulEngine/3DEngine/build/CMakeFiles/generate.stamp is up-to-date.
+  CMake does not need to re-run because E:/unitymaster/mulEngine/3DEngine/build/Framework/CMakeFiles/generate.stamp is up-to-date.
+  CMake is re-running because E:/unitymaster/mulEngine/3DEngine/build/Framework/Common/CMakeFiles/generate.stamp is out-of-date.
+    the file 'E:/unitymaster/mulEngine/3DEngine/Framework/Common/CMakeLists.txt'
+    is newer than 'E:/unitymaster/mulEngine/3DEngine/build/Framework/Common/CMakeFiles/generate.stamp.depend'
+    result='-1'
+  -- Selecting Windows SDK version 10.0.16299.0 to target Windows 10.0.15063.
+  -- Configuring done
+  -- Generating done
+  -- Build files have been written to: E:/unitymaster/mulEngine/3DEngine/build
