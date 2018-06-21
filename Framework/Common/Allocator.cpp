@@ -6,6 +6,14 @@
 #define ALIGN(x, a)         (((x) + ((a) - 1)) & ~((a) - 1))
 #endif
 
+My::Allocator::Allocator()
+ : m_pPageList(nullptr), m_pFreeList(nullptr),
+m_szDataSize(0), m_szPageSize(0),
+m_szAlignmentSize(0), m_szBlockSize(0), m_nBlocksPerPage(0)
+{
+}
+
+
 My::Allocator::Allocator(size_t data_size, size_t page_size, size_t alignment) {
 	Reset(data_size, page_size, alignment);
 }
