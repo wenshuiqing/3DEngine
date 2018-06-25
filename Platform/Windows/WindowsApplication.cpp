@@ -47,7 +47,8 @@ int My::WindowsApplication::Init()
 		NULL,                             // we have no parent window, NULL
 		NULL,                             // we aren't using menus, NULL
 		hInstance,                        // application handle
-		this);                            // used with multiple windows, NULL
+		this);                            // pass pointer to current object
+
 
 										  // display the window on the screen
 	ShowWindow(hWnd, SW_SHOW);

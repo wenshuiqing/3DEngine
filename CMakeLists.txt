@@ -178,7 +178,7 @@ MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
 
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-project (GameEngineFromScrath)
+project (3DEngine)
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Codec")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/GeomMath")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
