@@ -1,11 +1,11 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
+#include <cwchar>
 
 namespace My {
 	struct GfxConfiguration {
 		/// Inline all-elements constructor.
-		/// \param[in] _apiVer the API and version information
 		/// \param[in] r the red color depth in bits
 		/// \param[in] g the green color depth in bits
 		/// \param[in] b the blue color depth in bits
@@ -18,10 +18,10 @@ namespace My {
 		GfxConfiguration(uint32_t r = 8, uint32_t g = 8,
 			uint32_t b = 8, uint32_t a = 8,
 			uint32_t d = 24, uint32_t s = 0, uint32_t msaa = 0,
-			uint32_t width = 1920, uint32_t height = 1080) :
+			uint32_t width = 1920, uint32_t height = 1080, const wchar_t* app_name = L"GameEngineFromScratch") :
 			redBits(r), greenBits(g), blueBits(b), alphaBits(a),
 			depthBits(d), stencilBits(s), msaaSamples(msaa),
-			screenWidth(width), screenHeight(height)
+			screenWidth(width), screenHeight(height), appName(app_name)
 		{}
 
 		uint32_t redBits; ///< red color channel depth in bits
@@ -33,9 +33,11 @@ namespace My {
 		uint32_t msaaSamples; ///< MSAA samples
 		uint32_t screenWidth;
 		uint32_t screenHeight;
+		const wchar_t* appName;
 
 		friend std::ostream& operator<<(std::ostream& out, const GfxConfiguration& conf)
 		{
+			out << "App Name:" << conf.appName << std::endl;
 			out << "GfxConfiguration:" <<
 				" R:" << conf.redBits <<
 				" G:" << conf.greenBits <<
@@ -51,3 +53,4 @@ namespace My {
 		}
 	};
 }
+
