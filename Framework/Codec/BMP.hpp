@@ -1,4 +1,4 @@
-#Pragma once
+#pragma once
 #include "ImageParse.hpp"
 
 namespace My {
@@ -51,7 +51,7 @@ namespace My {
 					std::cout << "Sorry, only true color BMP is supported at now." << std::endl;
 				}
 				else {
-					uint8_t* pSourceData = buf.m_pData + pFileHeader->BitsOffset;
+					uint8_t* pSourceData = buffer.m_pData + pFileHeader->BitsOffset;
 					for (int32_t y = img.Height - 1; y >= 0; y--) {
 						for (uint32_t x = 0; x < img.Width; x++) {
 							(img.data + img.Width * (img.Height - y - 1) + x)->bgra = *reinterpret_cast<R8G8B8A8Unorm*>(pSourceData + img.pitch * y + x * (img.bitcount >> 3));

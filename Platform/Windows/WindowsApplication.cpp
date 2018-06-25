@@ -47,10 +47,12 @@ int My::WindowsApplication::Init()
 		NULL,                             // we have no parent window, NULL
 		NULL,                             // we aren't using menus, NULL
 		hInstance,                        // application handle
-		NULL);                            // used with multiple windows, NULL
+		this);                            // used with multiple windows, NULL
 
 										  // display the window on the screen
 	ShowWindow(hWnd, SW_SHOW);
+
+	m_hWnd = hWnd;
 
 	return result;
 }
@@ -79,20 +81,48 @@ void My::WindowsApplication::Update()
 // this is the main message handler for the program
 LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	WindowsApplication* pThis;
+	if (message == WM_NCCREATE)
+	{
+		pThis = static_cast<WindowsApplication*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
+
+		SetLastError(0);
+		if (!SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis)))
+		{
+			if (GetLastError() != 0)
+				return FALSE;
+		}
+	}
+	else
+	{
+		pThis = reinterpret_cast<WindowsApplication*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
 	// sort through and find what code to run for the message given
 	switch (message)
 	{
 	case WM_PAINT:
-		// we will replace this part with Rendering Module
 	{
-	} break;
+		//if (pThis)
+		{
+			pThis->OnDraw();
+		}
+	}
+	break;
+
+	case WM_KEYDOWN:
+	{
+		// we will replace this with input manager
+		m_bQuit = true;
+	}
+	break;
 
 	// this message is read when the window is closed
 	case WM_DESTROY:
 	{
 		// close the application entirely
 		PostQuitMessage(0);
-		BaseApplication::m_bQuit = true;
+		m_bQuit = true;
 		return 0;
 	}
 	}

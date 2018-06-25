@@ -67,11 +67,11 @@ My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetO
 			fullPath.assign(upPath);  // reset to current upPath.
 			if (src != m_strSearchPath.end()) {
 				fullPath.append(*src);
-				fullPath.append("/Asset/");
+				fullPath.append("/Assets/");
 				src++;
 			}
 			else {
-				fullPath.append("Asset/");
+				fullPath.append("Assets/");
 				looping = false;
 			}
 			fullPath.append(name);

@@ -12,6 +12,9 @@ namespace My{
 		virtual bool IsQuit();
 
 		inline GfxConfiguration& GetConfiguration() { return m_Config; }
+
+	protected:
+		virtual void OnDraw() {};
 	protected:
 		static bool m_bQuit;
 		GfxConfiguration m_Config;

@@ -6,3 +6,5 @@ BaseApplication.cpp
 GraphicsManager.cpp
 main.cpp
 )
+
+add_subdirectory(test)

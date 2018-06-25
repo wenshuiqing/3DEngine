@@ -10,94 +10,129 @@
 #endif
 
 namespace My {
-	template< typename T, int ... Indexes>
+	template<typename T, size_t SizeOfArray>
+	constexpr size_t countof(T(&)[SizeOfArray]) { return SizeOfArray; }
+
+	template<typename T, size_t RowSize, size_t ColSize>
+	constexpr size_t countof(T(&)[RowSize][ColSize]) { return RowSize * ColSize; }
+
+	template<typename T>
+	constexpr float normalize(T value) {
+		return value < 0
+			? -static_cast<float>(value) / std::numeric_limits<T>::min()
+			: static_cast<float>(value) / std::numeric_limits<T>::max()
+			;
+	}
+
+	template <template<typename> class TT, typename T, int ... Indexes>
 	class swizzle {
-		float v[sizeof...(Indexes)];
+		T v[sizeof...(Indexes)];
 
 	public:
-		
-		T& operator=(const T& rhs)
+
+		TT<T>& operator=(const TT<T>& rhs)
 		{
-            int indexes[] = { Indexes... };
-            for (int i = 0; i < sizeof...(Indexes); i++) {
-			    v[indexes[i]] = rhs[i];
-            }
-			return *(T*)this;
+			int indexes[] = { Indexes... };
+			for (int i = 0; i < sizeof...(Indexes); i++) {
+				v[indexes[i]] = rhs[i];
+			}
+			return *(TT<T>*)this;
 		}
-	
-		operator T () const
+
+		operator TT<T>() const
 		{
-			return T( v[Indexes]... );
+			return TT<T>(v[Indexes]...);
 		}
-		
+
 	};
 
-    typedef struct Vector2Type
-    {
-        union {
-            float data[2];
-            struct { float x, y; };
-            struct { float r, g; };
-            struct { float u, v; };
-		    swizzle<Vector2Type, 0, 1> xy;
-		    swizzle<Vector2Type, 1, 0> yx;
-        };
+	template <typename T>
+	struct Vector2Type
+	{
+		union {
+			T data[2];
+			struct { T x, y; };
+			struct { T r, g; };
+			struct { T u, v; };
+			swizzle<My::Vector2Type, T, 0, 1> xy;
+			swizzle<My::Vector2Type, T, 1, 0> yx;
+		};
 
-        Vector2Type() {};
-        Vector2Type(float _v) : x(_v), y(_v) {};
-        Vector2Type(float _x, float _y) : x(_x), y(_y) {};
-    } Vector2Type;
+		Vector2Type<T>() {};
+		Vector2Type<T>(const T& _v) : x(_v), y(_v) {};
+		Vector2Type<T>(const T& _x, const T& _y) : x(_x), y(_y) {};
 
-    typedef struct Vector3Type
-    {
-        union {
-            float data[3];
-            struct { float x, y, z; };
-            struct { float r, g, b; };
-		    swizzle<Vector2Type, 0, 1> xy;
-		    swizzle<Vector2Type, 1, 0> yx;
-		    swizzle<Vector2Type, 0, 2> xz;
-		    swizzle<Vector2Type, 2, 0> zx;
-		    swizzle<Vector2Type, 1, 2> yz;
-		    swizzle<Vector2Type, 2, 1> zy;
-		    swizzle<Vector3Type, 0, 1, 2> xyz;
-		    swizzle<Vector3Type, 1, 0, 2> yxz;
-		    swizzle<Vector3Type, 0, 2, 1> xzy;
-		    swizzle<Vector3Type, 2, 0, 1> zxy;
-		    swizzle<Vector3Type, 1, 2, 0> yzx;
-		    swizzle<Vector3Type, 2, 1, 0> zyx;
-        };
+		operator T*() { return data; };
+		operator const T*() const { return static_cast<const T*>(data); };
+	};
 
-        Vector3Type() {};
-        Vector3Type(float _v) : x(_v), y(_v), z(_v) {};
-        Vector3Type(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
-    } Vector3Type;
+	typedef Vector2Type<float> Vector2f;
 
-    typedef struct Vector4Type
-    {
-        union {
-            float data[4];
-            struct { float x, y, z, w; };
-            struct { float r, g, b, a; };
-            Vector3Type xyz;
-		    swizzle<Vector3Type, 0, 2, 1> xzy;
-		    swizzle<Vector3Type, 1, 0, 2> yxz;
-		    swizzle<Vector3Type, 1, 2, 0> yzx;
-		    swizzle<Vector3Type, 2, 0, 1> zxy;
-		    swizzle<Vector3Type, 2, 1, 0> zyx;
-        };
+	template <typename T>
+	struct Vector3Type
+	{
+		union {
+			T data[3];
+			struct { T x, y, z; };
+			struct { T r, g, b; };
+			swizzle<My::Vector2Type, T, 0, 1> xy;
+			swizzle<My::Vector2Type, T, 1, 0> yx;
+			swizzle<My::Vector2Type, T, 0, 2> xz;
+			swizzle<My::Vector2Type, T, 2, 0> zx;
+			swizzle<My::Vector2Type, T, 1, 2> yz;
+			swizzle<My::Vector2Type, T, 2, 1> zy;
+			swizzle<My::Vector3Type, T, 0, 1, 2> xyz;
+			swizzle<My::Vector3Type, T, 1, 0, 2> yxz;
+			swizzle<My::Vector3Type, T, 0, 2, 1> xzy;
+			swizzle<My::Vector3Type, T, 2, 0, 1> zxy;
+			swizzle<My::Vector3Type, T, 1, 2, 0> yzx;
+			swizzle<My::Vector3Type, T, 2, 1, 0> zyx;
+		};
 
-        Vector4Type() {};
-        Vector4Type(float _v) : x(_v), y(_v), z(_v), w(_v) {};
-        Vector4Type(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {};
-        operator Vector3Type() { return Vector3Type(x, y, z); }; 
-    } Vector4Type;
+		Vector3Type<T>() {};
+		Vector3Type<T>(const T& _v) : x(_v), y(_v), z(_v) {};
+		Vector3Type<T>(const T& _x, const T& _y, const T& _z) : x(_x), y(_y), z(_z) {};
+
+		operator T*() { return data; };
+		operator const T*() const { return static_cast<const T*>(data); };
+	};
+
+	typedef Vector3Type<float> Vector3f;
+
+	template <typename T>
+	struct Vector4Type
+	{
+		union {
+			T data[4];
+			struct { T x, y, z, w; };
+			struct { T r, g, b, a; };
+			swizzle<My::Vector3Type, T, 0, 2, 1> xzy;
+			swizzle<My::Vector3Type, T, 1, 0, 2> yxz;
+			swizzle<My::Vector3Type, T, 1, 2, 0> yzx;
+			swizzle<My::Vector3Type, T, 2, 0, 1> zxy;
+			swizzle<My::Vector3Type, T, 2, 1, 0> zyx;
+			swizzle<My::Vector4Type, T, 2, 1, 0, 3> bgra;
+		};
+
+		Vector4Type<T>() {};
+		Vector4Type<T>(const T& _v) : x(_v), y(_v), z(_v), w(_v) {};
+		Vector4Type<T>(const T& _x, const T& _y, const T& _z, const T& _w) : x(_x), y(_y), z(_z), w(_w) {};
+		Vector4Type<T>(const Vector3Type<T>& v3) : x(v3.x), y(v3.y), z(v3.z), w(1.0f) {};
+		Vector4Type<T>(const Vector3Type<T>& v3, const T& _w) : x(v3.x), y(v3.y), z(v3.z), w(_w) {};
+
+		operator T*() { return data; };
+		operator const T*() const { return static_cast<const T*>(data); };
+	};
+
+	typedef Vector4Type<float> Vector4f;
+	typedef Vector4Type<uint8_t> R8G8B8A8Unorm;
+	typedef Vector4Type<uint8_t> Vector4i;
 
     typedef struct Matrix3X3
     {
         union {
             float data[9];
-            struct { Vector3Type row[3]; };
+            struct { Vector3Type<float> row[3]; };
         };
 
         float& operator[](int index) {
@@ -114,7 +149,7 @@ namespace My {
     {
         union {
             float data[16];
-            struct { Vector4Type row[4]; };
+            struct { Vector4Type<float> row[4]; };
         };
 
         float& operator[](int index) {
@@ -126,6 +161,11 @@ namespace My {
         }
 
     } Matrix4X4;
+
+
+	typedef Vector4Type<float> Vector4f;
+	typedef Vector4Type<uint8_t> R8G8B8A8Unorm;
+	typedef Vector4Type<uint8_t> Vector4i;
 
     void MatrixRotationYawPitchRoll(Matrix4X4& matrix, const float yaw, const float pitch, const float roll)
     {
@@ -157,7 +197,7 @@ namespace My {
         return;
     }
 
-    void TransformCoord(Vector3Type& vector, const Matrix4X4& matrix)
+    void TransformCoord(Vector3Type<float>& vector, const Matrix4X4& matrix)
     {
         float x, y, z;
 
@@ -175,9 +215,9 @@ namespace My {
         return;
     }
 
-    void BuildViewMatrix(const Vector3Type position, const Vector3Type lookAt, const Vector3Type up, Matrix4X4& result)
+    void BuildViewMatrix(const Vector3Type<float> position, const Vector3Type<float> lookAt, const Vector3Type<float> up, Matrix4X4& result)
     {
-        Vector3Type zAxis, xAxis, yAxis;
+        Vector3Type<float> zAxis, xAxis, yAxis;
         float length, result1, result2, result3;
 
 
