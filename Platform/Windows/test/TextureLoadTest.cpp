@@ -6,10 +6,11 @@
 #include "AssetLoader.hpp"
 #include "utility.hpp"
 #include "BMP.hpp"
-
+#include "SceneObject.hpp"
+#include "SceneNode.hpp"
 using namespace My;
 using namespace std;
-
+using namespace xg;
 namespace My {
     class TestGraphicsManager : public D2dGraphicsManager
     {
@@ -45,7 +46,6 @@ namespace My {
 int My::TestApplication::Init()
 {
     int result;
-
     result = WindowsApplication::Init();
 
     if (result == 0) {

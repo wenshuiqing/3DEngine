@@ -1,0 +1,114 @@
+@startuml
+
+interface IRuntimeModule{
+    + virtual int Init() = 0
+	+ virtual void Destroy() = 0
+	+ virtual void Update() = 0
+}
+
+IRuntimeModule <|.. IApplication
+IApplication -- GfxConfiguration
+interface IApplication{
+    virtual int Init() = 0
+	virtual void Destroy() = 0
+	virtual void Update() = 0
+	virtual bool IsQuit() = 0
+    ==
+	virtual GfxConfiguration& GetConfiguration() = 0
+		
+}
+
+ImageParse ..> Buffer
+ImageParse ..> Image
+interface ImageParse{
+    virtual Parser(const Buffer& buf)
+}
+
+IApplication <|.. BaseApplication
+
+class BaseApplication{
+    --construcor--
+    + BaseApplication(GfxConfiguration& cfg)
+    -- functions--
+	+ virtual int Init()
+	+ virtual void Destroy()
+	+ virtual void Update()
+	+ virtual bool IsQuit()
+	+ inline GfxConfiguration& GetConfiguration()
+
+	# virtual void OnDraw()
+	# static bool m_bQuit
+	# GfxConfiguration m_Config
+}
+
+IRuntimeModule <|.. GraphicsManager
+class GraphicsManager{
+    virtual int Init()
+    virtual void Destroy()
+    virtual void Update()
+
+}
+
+class Allocator{
+    + Allocator()
+	+ Allocator(size_t data_size, size_t page_size, size_t alignment)
+
+	+ void Reset(size_t data_size, size_t page_size, size_t alignment)
+	+ void* Allocate()
+    + void Free(void* p)
+	+ void FreeAll()
+}
+
+IRuntimeModule <|.. MemoryManager
+MemoryManager *--> Allocator
+class MemoryManager{
+    + virtual int Init()
+	+ virtual void Update()
+	+ virtual void Destroy()
+
+	+ void* Allocate(size_t size)
+	+ void* Allocate(size_t size, size_t alignment)
+	+ void Free(void* p, size_t size)
+}
+
+
+IRuntimeModule <|.. AssetLoader
+AssetLoader ..> Buffer
+class MemoryManager{
+    + virtual int Init()
+	+ virtual void Update()
+	+ virtual void Destroy()
+
+}
+
+ImageParse <|.. BmpParser
+class BmpParser{
+    virtual Image Parser(const Buffer& buffer)
+}
+
+
+BaseApplication <|-- WindowApplication
+class WindowApplication{
+
+}
+BaseApplication <|-- LinuxApplication
+class LinuxApplication{
+
+}
+
+GraphicsManager <|-- D3D12GraphicsManager
+class D3D12GraphicsManager{
+
+}
+
+GraphicsManager <|-- OpenGLGraphicsManager
+class OpenGLGraphicsManager{
+    
+}
+
+GraphicsManager <|-- D2DGraphicsManager
+class D2DGraphicsManager{
+    
+}
+
+@enduml

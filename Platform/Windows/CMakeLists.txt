@@ -5,8 +5,8 @@ target_link_libraries(MyGameEngineD3d12 WindowsApplication  Common D3dRHI d3d12 
 add_executable(MyGameEngineOpenGL 
     WindowsApplication.cpp 
     OpenGLApplication.cpp
-    ${PROJECT_SOURCE_DIR}/External/GL/src/glad_wgl.c
+    ${PROJECT_SOURCE_DIR}/External/src/GL/src/glad_wgl.c
     )
 target_link_libraries(MyGameEngineOpenGL Common OpenGLRHI opengl32)
-target_include_directories(MyGameEngineOpenGL PRIVATE "${PROJECT_SOURCE_DIR}/External/GL/include")
+target_include_directories(MyGameEngineOpenGL PRIVATE "${PROJECT_SOURCE_DIR}/External/src/GL/include")
 add_subdirectory(test)
