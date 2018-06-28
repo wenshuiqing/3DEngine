@@ -10,6 +10,7 @@ namespace My {
         virtual void Destroy();
 
         virtual void Update();
+
     protected:
         HRESULT CreateGraphicsResources();
     protected:

@@ -16,4 +16,10 @@ void My::GraphicsManager::Update()
 {
 }
 
+void My::GraphicsManager::Draw()
+{
+}
 
+void My::GraphicsManager::Clear()
+{
+}

@@ -6,8 +6,7 @@
 #include "AssetLoader.hpp"
 #include "utility.hpp"
 #include "BMP.hpp"
-#include "SceneObject.hpp"
-#include "SceneNode.hpp"
+#include "SceneManager.hpp"
 using namespace My;
 using namespace std;
 using namespace xg;
@@ -40,7 +39,8 @@ namespace My {
 	IApplication* g_pApp                = static_cast<IApplication*>(new TestApplication(config));
     GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new TestGraphicsManager);
     MemoryManager*   g_pMemoryManager   = static_cast<MemoryManager*>(new MemoryManager);
-
+	AssetLoader*     g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
+	SceneManager*    g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
 }
 
 int My::TestApplication::Init()

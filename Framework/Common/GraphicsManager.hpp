@@ -8,6 +8,8 @@ namespace My{
 		virtual int Init();
 		virtual void Destroy();
 		virtual void Update();
+		virtual void Clear();
+		virtual void Draw();
 	};
-
+	extern GraphicsManager* g_pGraphicsManager;
 }

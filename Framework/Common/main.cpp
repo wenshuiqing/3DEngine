@@ -2,13 +2,9 @@
 #include "IApplication.hpp"
 #include "GraphicsManager.hpp"
 #include "MemoryManager.hpp"
+#include "AssetLoader.hpp"
+#include "SceneManager.hpp"
 using namespace My;
-
-namespace My {
-	extern IApplication*    g_pApp;
-	extern MemoryManager*   g_pMemoryManager;
-	extern GraphicsManager* g_pGraphicsManager;
-}
 
 int main(int argc, char** argv) {
 	int ret;
@@ -28,12 +24,26 @@ int main(int argc, char** argv) {
 		return ret;
 	}
 
+	if ((ret = g_pAssetLoader->Init()) != 0) {
+		printf("Asset Loader Initialize failed, will exit now.");
+		return ret;
+	}
+
+	if ((ret = g_pSceneManager->Init()) != 0) {
+		printf("Scene Manager Initialize failed, will exit now.");
+		return ret;
+	}
+
 	while (!g_pApp->IsQuit()) {
 		g_pApp->Update();
 		g_pMemoryManager->Update();
 		g_pGraphicsManager->Update();
+		g_pAssetLoader->Update();
+		g_pSceneManager->Update();
 	}
 
+	g_pSceneManager->Destroy();
+	g_pAssetLoader->Destroy();
 	g_pGraphicsManager->Destroy();
 	g_pMemoryManager->Destroy();
 	g_pApp->Destroy();

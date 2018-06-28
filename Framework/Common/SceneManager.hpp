@@ -12,9 +12,11 @@ namespace My {
 
 		virtual int Init();
 		virtual void Update();
-		virtual void Destory();
-	private:
-		SceneEmptyNode m_RootNode;
-	};
+		virtual void Destroy();
+		void LoadOgexScene(const char* scene_file_name);
 
+	protected:
+		std::unique_ptr<BaseSceneNode> m_RootNode;
+	};
+	extern SceneManager* g_pSceneManager;
 }

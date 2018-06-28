@@ -60,4 +60,3 @@ void My::D2dGraphicsManager::Destroy()
 
     CoUninitialize();
 }
-

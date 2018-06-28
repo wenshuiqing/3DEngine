@@ -3,16 +3,18 @@
 #include "OpenGLApplication.hpp"
 #include "OpenGL/OpenGLGraphicsManager.hpp"
 #include "MemoryManager.hpp"
+#include "AssetLoader.hpp"
+#include "SceneManager.hpp"
 #include "glad/glad_wgl.h"
-
 using namespace My;
 
 namespace My {
     GfxConfiguration config(8, 8, 8, 8, 32, 0, 0, 960, 540, L"3DEngine (Windows)");
-	IApplication* g_pApp                = static_cast<IApplication*>(new OpenGLApplication(config));
-    GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new OpenGLGraphicsManager);
-    MemoryManager*   g_pMemoryManager   = static_cast<MemoryManager*>(new MemoryManager);
-
+	IApplication* g_pApp = static_cast<IApplication*>(new OpenGLApplication(config));
+	GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new OpenGLGraphicsManager);
+	MemoryManager*   g_pMemoryManager = static_cast<MemoryManager*>(new MemoryManager);
+	AssetLoader*     g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
+	SceneManager*    g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
 }
 
 int My::OpenGLApplication::Init()
@@ -32,33 +34,32 @@ int My::OpenGLApplication::Init()
         pfd.cDepthBits = m_Config.depthBits;
         pfd.iLayerType = PFD_MAIN_PLANE;
 
-        HWND hWnd = reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow();
-        HDC  hDC  = GetDC(hWnd);
+        m_hDC  = GetDC(m_hWnd);
         // Set a temporary default pixel format.
-        int nPixelFormat = ChoosePixelFormat(hDC, &pfd);
+        int nPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
         if (nPixelFormat == 0) return -1;
 
-        result = SetPixelFormat(hDC, nPixelFormat, &pfd);
+        result = SetPixelFormat(m_hDC, nPixelFormat, &pfd);
         if(result != 1)
         {
                 return -1;
         }
 
         // Create a temporary rendering context.
-        m_RenderContext = wglCreateContext(hDC);
+        m_RenderContext = wglCreateContext(m_hDC);
         if(!m_RenderContext)
         {
                 return -1;
         }
 
         // Set the temporary rendering context as the current rendering context for this window.
-        result = wglMakeCurrent(hDC, m_RenderContext);
+        result = wglMakeCurrent(m_hDC, m_RenderContext);
         if(result != 1)
         {
                 return -1;
         }
 
-        if (!gladLoadWGL(hDC)) {
+        if (!gladLoadWGL(m_hDC)) {
             printf("WGL initialize failed!\n");
             result = -1;
         } else {
@@ -84,5 +85,10 @@ void My::OpenGLApplication::Destroy()
 void My::OpenGLApplication::Update()
 {
     WindowsApplication::Update();
+	g_pGraphicsManager->Clear();
+	g_pGraphicsManager->Draw();
+
+	// Present the back buffer to the screen since rendering is complete.
+	SwapBuffers(m_hDC);
 }
 

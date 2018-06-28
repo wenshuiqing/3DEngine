@@ -1,42 +1,57 @@
 cmake_minimum_required (VERSION 3.1) 
-
-# Windows specific code
-set (CMAKE_C_COMPILER               "clang-cl")
-set (CMAKE_C_FLAGS_DEBUG            "/Debug /Zi")
-set (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 /Debug")
-set (CMAKE_CXX_COMPILER             "clang-cl")
-set (CMAKE_CXX_FLAGS_DEBUG          "/Debug /Zi")
-set (CMAKE_CXX_FLAGS                "-Wall -Xclang -std=gnu++14")
-set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 /Debug")
-
-set (CMAKE_C_FLAGS                  "-Wall")
-set (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
-set (CMAKE_C_FLAGS_RELEASE          "-O4 -DNDEBUG")
-set (CMAKE_C_STANDARD 11)
-set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-set (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-
-
 # ------------------------- End of Generic CMake Variable Logging ------------------
 
-project (3DEngine)
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Parser")
+project (3DEngine)#项目工程名称
+set (CMAKE_C_STANDARD 11)
+set (CMAKE_CXX_STANDARD 11)
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include(TargetArchDetect)
+
+target_architecture(TARGET_ARCH)
+
+if((TARGET_ARCH MATCHES "x86_64" OR TARGET_ARCH MATCHES "ia64") AND NOT OF_32BIT)
+        set(ARCH_BIT 64)
+else()
+        set(ARCH_BIT 32)
+endif()
+
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Parser")#包含目录就是inlcude
 include_directories("${PROJECT_SOURCE_DIR}/Framework/GeomMath")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
 include_directories("${PROJECT_SOURCE_DIR}/RHI")
 
-IF(${UNIX})
-    set(MYGE_TARGET_PLATFORM "Linux")
-ELSEIF(${WIN32})
-    set(MYGE_TARGET_PLATFORM "Windows")
-ENDIF(${UNIX})
+
+set(MYGE_TARGET_PLATFORM "Windows")#自定义设置宏
+
 
 include_directories("${PROJECT_SOURCE_DIR}/Platform/${MYGE_TARGET_PLATFORM}")
 set(MYGE_EXTERNAL_ROOT ${PROJECT_SOURCE_DIR}/External/${MYGE_TARGET_PLATFORM}/)
 include_directories("${MYGE_EXTERNAL_ROOT}include")
 set(MYGE_EXTERNAL_LIBRARY_PATH ${MYGE_EXTERNAL_ROOT}lib/)
-add_subdirectory(Framework)
+find_library(XG_LIBRARY xg PATHS ${MYGE_EXTERNAL_LIBRARY_PATH})#寻找lib
+find_library(OPENDDL_LIBRARY OpenDDL PATHS ${MYGE_EXTERNAL_LIBRARY_PATH})
+find_library(OPENGEX_LIBRARY OpenGEX PATHS ${MYGE_EXTERNAL_LIBRARY_PATH})
+
+
+include(CTest)
+include(CheckCXXSourceCompiles)
+include(PlatformDependencies)
+CHECK_CXX_SOURCE_COMPILES(
+"#include <memory>
+
+int main(int argc, char** argv)
+{
+    std::unique_ptr<int> my_int = std::make_unique<int>();
+    *my_int = 0;
+    return *my_int;
+}
+"
+ HAVE_MAKE_UNIQUE)
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
+
+add_subdirectory(Framework)#包含子目录
 add_subdirectory(Platform)
 add_subdirectory(RHI)
 add_subdirectory(Test)

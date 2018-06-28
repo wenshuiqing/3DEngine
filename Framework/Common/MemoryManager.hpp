@@ -39,5 +39,5 @@ namespace My {
 
 	};
 
-
+	extern MemoryManager*   g_pMemoryManager;
 }

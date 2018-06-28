@@ -2,32 +2,32 @@
 #include <string>
 #include "AssetLoader.hpp"
 #include "MemoryManager.hpp"
-#include "OGEX.hpp"
+#include "ogex.hpp"
 
 using namespace My;
 using namespace std;
 
 namespace My {
-    MemoryManager* g_pMemoryManager = new MemoryManager();
+	MemoryManager* g_pMemoryManager = new MemoryManager();
 }
 
-int main(int , char** )
+int main(int argc, char** argv)
 {
-    g_pMemoryManager->Init();
+	g_pMemoryManager->Init();
 
-    AssetLoader asset_loader;
-    string ogex_text = asset_loader.SyncOpenAndReadTextFileToString("Scene/Example.ogex");
+	AssetLoader asset_loader;
+	string ogex_text = asset_loader.SyncOpenAndReadTextFileToString("Scene/Example.ogex");
 
-    OgexParser* ogex_parser = new OgexParser ();
-    unique_ptr<BaseSceneNode> root_node = ogex_parser->Parse(ogex_text);
-    delete ogex_parser;
+	OgexParser* ogex_parser = new OgexParser();
+	unique_ptr<BaseSceneNode> root_node = ogex_parser->Parse(ogex_text);
+	delete ogex_parser;
 
-    cout << *root_node << endl;
+	cout << *root_node << endl;
 
-    g_pMemoryManager->Destroy();
+	g_pMemoryManager->Destroy();
 
-    delete g_pMemoryManager;
+	delete g_pMemoryManager;
 
-    return 0;
+	return 0;
 }
 

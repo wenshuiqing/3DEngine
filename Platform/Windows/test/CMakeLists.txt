@@ -1,5 +1,7 @@
-add_executable(TextureLoadTest TextureLoadTest.cpp)
-target_link_libraries(TextureLoadTest WindowsApplication Common D2dRHI d2d1)
 
-add_test(NAME TEST_TextureLoad COMMAND TextureLoadTest)
+add_executable(TextureLoadTest TextureLoadTest.cpp)#生成可执行程序
+target_link_libraries(TextureLoadTest WindowsApplication Common ${OPENGEX_LIBRARY} ${OPENDDL_LIBRARY} ${XG_LIBRARY} D2dRHI d2d1)
+__add_xg_platform_dependencies(TextureLoadTest)
+
+add_test(NAME TEST_TextureLoad COMMAND TextureLoadTest)#工程名称
 
