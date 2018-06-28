@@ -41,7 +41,7 @@ int32_t main(int32_t argc, char** argv)
     snEmpty.AppendChild(std::move(snCamera));
 
     cout << snEmpty << endl;
-
+	cin.get();
     return result;
 }
 

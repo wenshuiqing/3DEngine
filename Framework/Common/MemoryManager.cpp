@@ -35,10 +35,10 @@ int My::MemoryManager::Init() {
 
 	if (!s_bInit)
 	{
-		m_pBlockSizeLookup = new size_t[kNumBlocks + 1];//存放申请块大小的索引，比如申请大小为3的块，3<4，所以索引为0，最终给出的大小为4
+		m_pBlockSizeLookup = new size_t[kMaxBlockSize + 1];//存放申请块大小的索引，比如申请大小为3的块，3<4，所以索引为0，最终给出的大小为4
 
 		size_t j = 0;
-		for (size_t i = 0; i < kNumBlocks; i++)
+		for (size_t i = 0; i < kMaxBlockSize; i++)
 		{
 			if (i > kBlockSize[j])j++;
 

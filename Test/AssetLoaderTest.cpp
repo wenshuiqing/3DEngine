@@ -23,6 +23,7 @@ int main(int , char** )
 
     delete g_pMemoryManager;
 
+	cin.get();
     return 0;
 }
 

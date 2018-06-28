@@ -7,9 +7,9 @@
 #endif
 
 My::Allocator::Allocator()
- : m_pPageList(nullptr), m_pFreeList(nullptr),
-m_szDataSize(0), m_szPageSize(0),
-m_szAlignmentSize(0), m_szBlockSize(0), m_nBlocksPerPage(0)
+	: m_pPageList(nullptr), m_pFreeList(nullptr),
+	m_szDataSize(0), m_szPageSize(0),
+	m_szAlignmentSize(0), m_szBlockSize(0), m_nBlocksPerPage(0)
 {
 }
 
@@ -31,7 +31,7 @@ void My::Allocator::Reset(size_t data_size, size_t page_size, size_t alignment) 
 	size_t minimal_size = (sizeof(BlockHeader) > m_szDataSize) ? sizeof(BlockHeader) : m_szDataSize;
 
 #if defined(_DEBUG)
-	assert(alignment > 0 && alignment&(alignment - 1) == 0);
+	assert(alignment > 0 && (alignment&(alignment - 1)) == 0);
 #endif
 
 	m_szBlockSize = ALIGN(minimal_size, alignment);
@@ -62,7 +62,7 @@ void* My::Allocator::Allocate() {
 		m_pPageList = pNewPage;
 
 		BlockHeader* pBlock = pNewPage->Blocks();
-		for (uint32_t i = 0; i < m_nBlocksPerPage; i++)
+		for (uint32_t i = 0; i < m_nBlocksPerPage - 1; i++)
 		{
 			pBlock->pNext = NextBlock(pBlock);
 			pBlock = NextBlock(pBlock);

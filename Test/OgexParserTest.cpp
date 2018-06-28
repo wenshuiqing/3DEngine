@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	g_pMemoryManager->Destroy();
 
 	delete g_pMemoryManager;
-
+	cin.get();
 	return 0;
 }
 
