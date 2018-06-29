@@ -186,6 +186,20 @@ namespace My {
 		return result;
 	}
 
+
+	template <template<typename> class TT, typename T>
+	TT<T> operator/(const TT<T>& vec1, const T& scale)
+	{
+		TT<T> result;
+		size_t length = countof(result.data);
+		for (size_t i = 0; i < length; i++)
+		{
+			result[i] = vec1[i] / scale;
+		}
+
+		return result;
+	}
+
 	template <template <typename> class TT, typename T>
 	inline void CrossProduct(TT<T>& result, const TT<T>& a, const TT<T>& b)
 	{
@@ -198,13 +212,15 @@ namespace My {
 	}
 
 	template <template <typename> class TT, typename T>
-	inline void DotProduct(T& result, const TT<T>& vec1, const TT<T>& vec2)
+	inline T& DotProduct(const TT<T>& vec1, const TT<T>& vec2)
 	{
+		T result = 0;
 		size_t length = countof(vec1.data);
 		for (size_t i = 0; i < length; i++)
 		{
 			result += vec1[i] * vec2[i];
 		}
+		return result;
 	}
 
 	template <typename T>
@@ -304,8 +320,9 @@ namespace My {
 	}
 
 	template <typename T, int Da, int Db, int Dc>
-	void MatrixMultiply(Matrix<T, Da, Dc>& result, const Matrix<T, Da, Db>& matrix1, const Matrix<T, Dc, Db>& matrix2)
+	Matrix<T, Da, Dc>& MatrixMultiply(const Matrix<T, Da, Db>& matrix1, const Matrix<T, Dc, Db>& matrix2)
 	{
+		Matrix<T, Da, Dc> result;
 		Matrix<T, Dc, Db> matrix2_transpose;
 		Transpose(matrix2_transpose, matrix2);
 		for (int i = 0; i < Da; i++) {
@@ -316,6 +333,7 @@ namespace My {
 				}
 			}
 		}
+		return result;
 	}
 
 	template <typename T, int ROWS, int COLS>
@@ -337,9 +355,20 @@ namespace My {
 	}
 
 	template <typename T>
-	inline void Normalize(T& result)
+	inline T& Normalize(T& value)
 	{
-		//ispc::Normalize(result, countof(result.data));
+		T result;
+		float length = sqrt(DotProduct(value, value));
+		result = value / length;
+		return result;
+	}
+
+
+	template <typename T>
+	inline void Normalized(T& result)
+	{
+		float length = sqrt(DotProduct(result, result));
+		result = result / length;
 	}
 
 	inline void MatrixRotationYawPitchRoll(Matrix4X4f& matrix, const float yaw, const float pitch, const float roll)
@@ -392,7 +421,7 @@ namespace My {
 	inline void BuildViewMatrix(Matrix4X4f& result, const Vector3f position, const Vector3f lookAt, const Vector3f up)
 	{
 		Vector3f zAxis, xAxis, yAxis;
-		float result1, result2, result3;
+		float result1 = 0, result2 = 0, result3 = 0;
 
 		zAxis = lookAt - position;
 		Normalize(zAxis);
@@ -402,13 +431,13 @@ namespace My {
 
 		CrossProduct(yAxis, zAxis, xAxis);
 
-		DotProduct(result1, xAxis, position);
+		result1 = DotProduct(xAxis, position);
 		result1 = -result1;
 
-		DotProduct(result2, yAxis, position);
+		result2 = DotProduct(yAxis, position);
 		result2 = -result2;
 
-		DotProduct(result3, zAxis, position);
+		result3 = DotProduct(zAxis, position);
 		result3 = -result3;
 
 		// Set the computed values in the view matrix.

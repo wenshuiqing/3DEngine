@@ -196,7 +196,7 @@ void OpenGLGraphicsManager::Draw()
 	Matrix4X4f rotationMatrixZ;
 	MatrixRotationY(rotationMatrixY, rotateAngle);
 	MatrixRotationZ(rotationMatrixZ, rotateAngle);
-	MatrixMultiply(m_worldMatrix, rotationMatrixZ, rotationMatrixY);
+	m_worldMatrix= MatrixMultiply(rotationMatrixZ, rotationMatrixY);
 
 	// Generate the view matrix based on the camera's position.
 	CalculateCameraPosition();
@@ -205,6 +205,22 @@ void OpenGLGraphicsManager::Draw()
 	glUseProgram(m_shaderProgram);
 	SetShaderParameters(m_worldMatrix, m_viewMatrix, m_projectionMatrix);
 
+	//////////////////////////////////////////////////////////////////////////
+	///Test
+	//////////////////////////////////////////////////////////////////////////
+	static int isfirst = 0;
+	if (isfirst < 5)
+	{
+		isfirst++;
+		cout << m_worldMatrix << endl;
+		cout << m_viewMatrix << endl;
+		cout << m_projectionMatrix << endl;
+
+		Vector3f f(1, 0, 0);
+		Vector3f r = Normalize(f);
+		cout << r << endl;
+
+	}
 	// Render the model using the color shader.
 	RenderBuffers();
 
@@ -417,8 +433,8 @@ bool OpenGLGraphicsManager::InitializeShader(const char* vsFilename, const char*
 	glAttachShader(m_shaderProgram, m_fragmentShader);
 
 	// Bind the shader input variables.
-	glBindAttribLocation(m_shaderProgram, 0, "inputPosition");
-	glBindAttribLocation(m_shaderProgram, 1, "inputColor");
+	glBindAttribLocation(m_shaderProgram, 0, "aPosition");
+	glBindAttribLocation(m_shaderProgram, 1, "aColor");
 
 	// Link the shader program.
 	glLinkProgram(m_shaderProgram);

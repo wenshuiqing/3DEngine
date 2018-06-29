@@ -30,7 +30,7 @@ namespace My {
 
 		const bool VSYNC_ENABLED = true;
 		const float screenDepth = 1000.0f;
-		const float screenNear = 0.1f;
+		const float screenNear = 0.03f;
 
 		int     m_vertexCount, m_indexCount;
 		unsigned int m_vertexArrayId, m_vertexBufferId, m_indexBufferId;

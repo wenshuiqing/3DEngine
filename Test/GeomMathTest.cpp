@@ -129,6 +129,8 @@ int main()
     vector_test();
     matrix_test();
 
+
+	cin.get();
 	return 0;
 }
 
