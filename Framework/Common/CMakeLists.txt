@@ -7,7 +7,7 @@ BaseApplication.cpp
 GraphicsManager.cpp
 SceneManager.cpp
 MemoryManager.cpp
-SceneParser.cpp
+Scene.cpp
 SceneObject.cpp
 main.cpp
 )

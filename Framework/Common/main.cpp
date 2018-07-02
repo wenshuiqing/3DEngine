@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 		printf("Scene Manager Initialize failed, will exit now.");
 		return ret;
 	}
-	g_pSceneManager->LoadScene("Scene/cube.ogex");
+	g_pSceneManager->LoadScene("Scene/test.ogex");
 
 	if ((ret = g_pGraphicsManager->Init()) != 0) {
 		printf("Graphics Manager Initialize failed, will exit now.");

@@ -126,7 +126,10 @@ namespace My {
 		operator const T*() const { return static_cast<const T*>(data); };
 		Vector4Type& operator=(const T* f)
 		{
-			memcpy(data, f, sizeof(T) * 4);
+			for (int32_t i = 0; i < 4; i++)
+			{
+				data[i] = *(f + i);
+			}
 			return *this;
 		};
 	};
@@ -255,7 +258,11 @@ namespace My {
 
 		Matrix& operator=(const T* _data)
 		{
-			memcpy(data, _data, ROWS * COLS * sizeof(T));
+			for (int i = 0; i < ROWS; i++) {
+				for (int j = 0; j < COLS; j++) {
+					data[i][j] = *(_data + i * COLS + j);
+				}
+			}
 			return *this;
 		}
 	};
@@ -320,27 +327,27 @@ namespace My {
 	}
 
 	template <typename T, int Da, int Db, int Dc>
-	Matrix<T, Da, Dc>& MatrixMultiply(const Matrix<T, Da, Db>& matrix1, const Matrix<T, Dc, Db>& matrix2)
+	void MatrixMultiply(Matrix<T, Da, Dc>& result, const Matrix<T, Da, Db>& matrix1, const Matrix<T, Db, Dc>& matrix2)
 	{
-		Matrix<T, Da, Dc> result;
+		Matrix<T, Da, Dc> temp;
 		Matrix<T, Dc, Db> matrix2_transpose;
 		Transpose(matrix2_transpose, matrix2);
 		for (int i = 0; i < Da; i++) {
 			for (int j = 0; j < Dc; j++) {
 				for (int k = 0; k < Db; k++)
 				{
-					result[i][j] += (*(matrix1[i] + k)) * (*(matrix2_transpose[j] + k));
+					temp[i][j] += (*(matrix1[i] + k)) * (*(matrix2_transpose[j] + k));
 				}
 			}
 		}
-		return result;
+		result = temp;
 	}
 
 	template <typename T, int ROWS, int COLS>
 	Matrix<T, ROWS, COLS> operator*(const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
 	{
 		Matrix<T, ROWS, COLS> result;
-		result = MatrixMultiply(matrix1, matrix2);
+		MatrixMultiply(result,matrix1, matrix2);
 
 		return result;
 	}
