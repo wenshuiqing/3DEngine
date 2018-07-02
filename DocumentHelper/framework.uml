@@ -119,11 +119,13 @@ OpenGLApplication --> GraphicsManager
 OpenGLApplication --> AssetLoader
 
 GraphicsManager <|-- D3D12GraphicsManager
+D3D12GraphicsManager ..> SceneManager
 class D3D12GraphicsManager{
 
 }
 
 GraphicsManager <|-- OpenGLGraphicsManager
+OpenGLGraphicsManager ..> SceneManager
 class OpenGLGraphicsManager{
     
 }
@@ -133,14 +135,14 @@ class D2DGraphicsManager{
     
 }
 
-SceneParser ..> BaseSceneNode
+SceneParser ..> Scene
 interface SceneParser{
-	virtual BaseSceneNode Parse(const std::string& buf)
+	virtual Scene Parse(const std::string& buf)
 }
 SceneParser <|.. OgexParser 
-OgexParser -->"0..*"BaseSceneObject
+OgexParser "1"-->"0..*"BaseSceneObject
 class OgexParser{
-	virtual BaseSceneNode Parse(const std::string& buf)
+	virtual Scene Parse(const std::string& buf)
 }
 
 class BaseSceneObject{
@@ -168,12 +170,27 @@ SceneObjectTransform <|-- SceneObjectScale
 SceneObjectGeometry "1"-->"0..*" SceneObjectMesh
 
 IRuntimeModule <|.. SceneManager
-
+SceneManager ..>Scene
+SceneManager ..> OgexParser
 class SceneManager{
-
+	Scene LoadScene(string name)
 }
 SceneManager --> BaseSceneNode
 SceneManager ..> AssetLoader
+
+Scene "1"-->"0..*"  BaseSceneNode
+Scene "1"-->"0..*"  SceneObjectMesh
+Scene "1"-->"0..*"  SceneObjectTexture
+Scene "1"-->"0..*"  SceneObjectMaterial
+Scene "1"-->"0..*"  SceneObjectGeometry
+Scene "1"-->"0..*"  SceneObjectLight
+Scene "1"-->"0..*"  SceneObjectCamera
+class Scene{
+	BaseSceneObject GetSceneObject()
+} 
+
+
+
 
 BaseSceneNode -->"1..*" BaseSceneNode
 BaseSceneNode "1"-->"0..*" SceneObjectTransform
