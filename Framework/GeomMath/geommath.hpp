@@ -340,7 +340,7 @@ namespace My {
 	Matrix<T, ROWS, COLS> operator*(const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
 	{
 		Matrix<T, ROWS, COLS> result;
-		MatrixMultiply(result, matrix1, matrix2);
+		result = MatrixMultiply(matrix1, matrix2);
 
 		return result;
 	}

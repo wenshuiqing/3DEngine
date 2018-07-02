@@ -1,4 +1,4 @@
-#生成静态库
+﻿#生成静态库
 add_library(Common
 Image.cpp
 AssetLoader.cpp
@@ -7,6 +7,7 @@ BaseApplication.cpp
 GraphicsManager.cpp
 SceneManager.cpp
 MemoryManager.cpp
+SceneParser.cpp
 SceneObject.cpp
 main.cpp
 )

@@ -1,5 +1,16 @@
 @startuml
 
+
+Main --> IApplication
+Main --> SceneManager
+Main --> MemoryManager
+Main --> GraphicsManager
+Main --> AssetLoader
+class Main{
+
+}
+
+
 interface IRuntimeModule{
     + virtual int Init() = 0
 	+ virtual void Destroy() = 0
@@ -95,6 +106,17 @@ BaseApplication <|-- LinuxApplication
 class LinuxApplication{
 
 }
+WindowApplication <|-- OpenGLApplication
+WindowApplication <|-- D3D12Appliacation
+D3D12Appliacation --> SceneManager
+D3D12Appliacation --> MemoryManager
+D3D12Appliacation --> GraphicsManager
+D3D12Appliacation --> AssetLoader
+
+OpenGLApplication --> SceneManager
+OpenGLApplication --> MemoryManager
+OpenGLApplication --> GraphicsManager
+OpenGLApplication --> AssetLoader
 
 GraphicsManager <|-- D3D12GraphicsManager
 class D3D12GraphicsManager{
@@ -110,5 +132,62 @@ GraphicsManager <|-- D2DGraphicsManager
 class D2DGraphicsManager{
     
 }
+
+SceneParser ..> BaseSceneNode
+interface SceneParser{
+	virtual BaseSceneNode Parse(const std::string& buf)
+}
+SceneParser <|.. OgexParser 
+OgexParser -->"0..*"BaseSceneObject
+class OgexParser{
+	virtual BaseSceneNode Parse(const std::string& buf)
+}
+
+class BaseSceneObject{
+	# Guid m_guid
+	# SceneObjectType m_type
+}
+
+BaseSceneObject <|-- SceneObjectMesh
+BaseSceneObject <|-- SceneObjectTexture
+BaseSceneObject <|-- SceneObjectMaterial
+BaseSceneObject <|-- SceneObjectGeometry
+BaseSceneObject <|-- SceneObjectLight
+BaseSceneObject <|-- SceneObjectCamera
+
+SceneObjectCamera <|-- SceneobjectOrthgonalCamera
+SceneObjectCamera <|-- SceneObjectPerspectiveCamera
+
+SceneObjectLight <|-- SceneObjectSpotLight
+SceneObjectLight <|-- SceneObjectOmniLight
+
+SceneObjectTransform <|-- SceneObjectTranslation
+SceneObjectTransform <|-- SceneObjectRotation
+SceneObjectTransform <|-- SceneObjectScale
+
+SceneObjectGeometry "1"-->"0..*" SceneObjectMesh
+
+IRuntimeModule <|.. SceneManager
+
+class SceneManager{
+
+}
+SceneManager --> BaseSceneNode
+SceneManager ..> AssetLoader
+
+BaseSceneNode -->"1..*" BaseSceneNode
+BaseSceneNode "1"-->"0..*" SceneObjectTransform
+
+class BaseSceneNode{
+	# string m_name
+	# list<BaseSceneNode> m_child
+	# list<SceneObjectTransform> m_Transform
+	+ void AppendChild(BaseSceneNode node)
+	+ void AppendChild(SceneObjectTransform transform)
+}
+
+BaseSceneNode <|-- SceneGeometryNode 
+BaseSceneNode <|-- SceneLigthtNode
+BaseSceneNode <|-- SceneCameraNode
 
 @enduml

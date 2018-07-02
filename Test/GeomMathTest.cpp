@@ -80,6 +80,10 @@ void matrix_test()
     cout << "Matrix of Translation on X(" << x << ") Y(" << y << ") Z(" << z << "):";
     cout << translate;
 
+    cout << "Matrix multiplication: Rotation Y * Rotation Z * Translation on X:";
+    Matrix4X4f transform = m1 * ry * rz * translate;
+    cout << transform;
+
     Vector3f v = { 1.0f, 0.0f, 0.0f };
 
     Vector3f v1 = v;
@@ -129,8 +133,6 @@ int main()
     vector_test();
     matrix_test();
 
-
-	cin.get();
 	return 0;
 }
 
