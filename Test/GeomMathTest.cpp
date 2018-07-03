@@ -124,6 +124,17 @@ void matrix_test()
 
 	Matrix4X4f mvp = view * perspective;
 	cout << "MVP:" << mvp;
+
+
+
+	Matrix4X4f rtemp = InverseMatrix4X4f(mvp);
+	cout << "RTEMP:" << rtemp;
+
+	Matrix4X4f E = mvp * rtemp;
+	cout << "E:" << E;
+
+	cin.get();
+
 }
 
 int main()

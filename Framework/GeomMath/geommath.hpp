@@ -268,6 +268,7 @@ namespace My {
 	};
 
 	typedef Matrix<float, 4, 4> Matrix4X4f;
+	typedef Matrix<float, 3, 3> Matrix3X3f;
 
 	template <typename T, int ROWS, int COLS>
 	std::ostream& operator<<(std::ostream& out, Matrix<T, ROWS, COLS> matrix)
@@ -347,8 +348,53 @@ namespace My {
 	Matrix<T, ROWS, COLS> operator*(const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
 	{
 		Matrix<T, ROWS, COLS> result;
-		MatrixMultiply(result,matrix1, matrix2);
+		MatrixMultiply(result, matrix1, matrix2);
 
+		return result;
+	}
+
+	template <typename T, int ROWS, int COLS>
+	Matrix<T, ROWS, COLS> operator*(const float scale, const Matrix<T, ROWS, COLS>& matrix)
+	{
+		Matrix<T, ROWS, COLS> result;
+
+		for (size_t i = 0; i < ROWS; i++)
+		{
+			for (size_t j = 0; j < COLS; j++)
+			{
+				result[i][j] = matrix[i][j] * scale;
+			}
+		}
+		return result;
+	}
+
+	template <typename T, int ROWS, int COLS>
+	Matrix<T, ROWS, COLS> operator*(const Matrix<T, ROWS, COLS>& matrix, const float scale)
+	{
+		Matrix<T, ROWS, COLS> result;
+
+		for (size_t i = 0; i < ROWS; i++)
+		{
+			for (size_t j = 0; j < COLS; j++)
+			{
+				result[i][j] = matrix[i][j] * scale;
+			}
+		}
+		return result;
+	}
+
+	template <typename T, int ROWS, int COLS>
+	Matrix<T, ROWS, COLS> operator/(const Matrix<T, ROWS, COLS>& matrix, const float scale)
+	{
+		Matrix<T, ROWS, COLS> result;
+
+		for (size_t i = 0; i < ROWS; i++)
+		{
+			for (size_t j = 0; j < COLS; j++)
+			{
+				result[i][j] = matrix[i][j] / scale;
+			}
+		}
 		return result;
 	}
 
@@ -377,6 +423,129 @@ namespace My {
 		float length = sqrt(DotProduct(result, result));
 		result = result / length;
 	}
+
+	// 00 01 02
+	// 10 11 12
+	// 20 21 22
+	//行列式
+	float Deteminant3x3f(Matrix3X3f& matrix) {
+
+		float result = (matrix[0][0] * matrix[1][1] * matrix[2][2] +
+			matrix[0][1] * matrix[1][2] * matrix[2][0] +
+			matrix[0][2] * matrix[1][0] * matrix[2][1]) -
+			(matrix[0][2] * matrix[1][1] * matrix[2][0] +
+				matrix[0][1] * matrix[1][0] * matrix[2][2] +
+				matrix[0][0] * matrix[1][2] * matrix[2][1]);
+
+		return result;
+	}
+	//伴随矩阵
+	Matrix3X3f& AdjointMatrix3x3f(Matrix3X3f& matrix) {
+
+		Matrix3X3f result;
+
+		result[0][0] = pow(-1, 2)*(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
+		result[0][1] = pow(-1, 3)*(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
+		result[0][2] = pow(-1, 4)*(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
+
+		result[1][0] = pow(-1, 3)*(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
+		result[1][1] = pow(-1, 4)*(matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
+		result[1][2] = pow(-1, 5)*(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]);
+
+		result[2][0] = pow(-1, 4)*(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]);
+		result[2][1] = pow(-1, 5)*(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]);
+		result[2][2] = pow(-1, 6)*(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]);
+
+
+		return result;
+	}
+
+
+	Matrix3X3f InverseMatrix3X3f(Matrix3X3f& matrix) {
+
+		Matrix3X3f result;
+
+		float det = (matrix[0][0] * matrix[1][1] * matrix[2][2] +
+			matrix[0][1] * matrix[1][2] * matrix[2][0] +
+			matrix[0][2] * matrix[1][0] * matrix[2][1]) -
+			(matrix[0][2] * matrix[1][1] * matrix[2][0] +
+				matrix[0][1] * matrix[1][0] * matrix[2][2] +
+				matrix[0][0] * matrix[1][2] * matrix[2][1]);
+		det = 1 / det;
+
+
+		result[0][0] = det * pow(-1, 2)*(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
+		result[0][1] = det * pow(-1, 3)*(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
+		result[0][2] = det * pow(-1, 4)*(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
+
+		result[1][0] = det * pow(-1, 3)*(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
+		result[1][1] = det * pow(-1, 4)*(matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
+		result[1][2] = det * pow(-1, 5)*(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]);
+
+		result[2][0] = det * pow(-1, 4)*(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]);
+		result[2][1] = det * pow(-1, 5)*(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]);
+		result[2][2] = det * pow(-1, 6)*(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]);
+
+
+		return result;
+	}
+
+
+
+	Matrix4X4f InverseMatrix4X4f(Matrix4X4f& matrix) {
+		Matrix4X4f result = matrix;
+
+		float A2323 = matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2];
+		float A1323 = matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1];
+		float A1223 = matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1];
+		float A0323 = matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0];
+		float A0223 = matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0];
+		float A0123 = matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0];
+		float A2313 = matrix[1][2] * matrix[3][3] - matrix[1][3] * matrix[3][2];
+		float A1313 = matrix[1][1] * matrix[3][3] - matrix[1][3] * matrix[3][1];
+		float A1213 = matrix[1][1] * matrix[3][2] - matrix[1][2] * matrix[3][1];
+		float A2312 = matrix[1][2] * matrix[2][3] - matrix[1][3] * matrix[2][2];
+		float A1312 = matrix[1][1] * matrix[2][3] - matrix[1][3] * matrix[2][1];
+		float A1212 = matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1];
+		float A0313 = matrix[1][0] * matrix[3][3] - matrix[1][3] * matrix[3][0];
+		float A0213 = matrix[1][0] * matrix[3][2] - matrix[1][2] * matrix[3][0];
+		float A0312 = matrix[1][0] * matrix[2][3] - matrix[1][3] * matrix[2][0];
+		float A0212 = matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0];
+		float A0113 = matrix[1][0] * matrix[3][1] - matrix[1][1] * matrix[3][0];
+		float A0112 = matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0];
+
+		//计算行列式的值
+		float det = matrix[0][0] * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223)
+			- matrix[0][1] * (matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223)
+			+ matrix[0][2] * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123)
+			- matrix[0][3] * (matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
+		det = 1 / det;
+
+
+
+
+		//Aij = ((-1)^(i+j)*Mij)T   
+		result[0][0] = det * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223);
+		result[0][1] = det * -(matrix[0][1] * A2323 - matrix[0][2] * A1323 + matrix[0][3] * A1223);
+		result[0][2] = det * (matrix[0][1] * A2313 - matrix[0][2] * A1313 + matrix[0][3] * A1213);
+		result[0][3] = det * -(matrix[0][1] * A2312 - matrix[0][2] * A1312 + matrix[0][3] * A1212);
+		result[1][0] = det * -(matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223);
+		result[1][1] = det * (matrix[0][0] * A2323 - matrix[0][2] * A0323 + matrix[0][3] * A0223);
+		result[1][2] = det * -(matrix[0][0] * A2313 - matrix[0][2] * A0313 + matrix[0][3] * A0213);
+		result[1][3] = det * (matrix[0][0] * A2312 - matrix[0][2] * A0312 + matrix[0][3] * A0212);
+		result[2][0] = det * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123);
+		result[2][1] = det * -(matrix[0][0] * A1323 - matrix[0][1] * A0323 + matrix[0][3] * A0123);
+		result[2][2] = det * (matrix[0][0] * A1313 - matrix[0][1] * A0313 + matrix[0][3] * A0113);
+		result[2][3] = det * -(matrix[0][0] * A1312 - matrix[0][1] * A0312 + matrix[0][3] * A0112);
+		result[3][0] = det * -(matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
+		result[3][1] = det * (matrix[0][0] * A1223 - matrix[0][1] * A0223 + matrix[0][2] * A0123);
+		result[3][2] = det * -(matrix[0][0] * A1213 - matrix[0][1] * A0213 + matrix[0][2] * A0113);
+		result[3][3] = det * (matrix[0][0] * A1212 - matrix[0][1] * A0212 + matrix[0][2] * A0112);
+
+		return result;
+	}
+
+
 
 	inline void MatrixRotationYawPitchRoll(Matrix4X4f& matrix, const float yaw, const float pitch, const float roll)
 	{
@@ -486,7 +655,19 @@ namespace My {
 
 		return;
 	}
+	inline void BuildPerspectiveFovRHMatrix(Matrix4X4f& matrix, const float fieldOfView, const float screenAspect, const float screenNear, const float screenDepth)
+	{
+		Matrix4X4f perspective = { { {
+			{ 1.0f / (screenAspect * tanf(fieldOfView * 0.5f)), 0.0f, 0.0f, 0.0f },
+		{ 0.0f, 1.0f / tanf(fieldOfView * 0.5f), 0.0f, 0.0f },
+		{ 0.0f, 0.0f, screenDepth / (screenNear - screenDepth), -1.0f },
+		{ 0.0f, 0.0f, (-screenNear * screenDepth) / (screenDepth - screenNear), 0.0f }
+			} } };
 
+		matrix = perspective;
+
+		return;
+	}
 
 	inline void MatrixTranslation(Matrix4X4f& matrix, const float x, const float y, const float z)
 	{
