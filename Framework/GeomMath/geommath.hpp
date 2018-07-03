@@ -427,40 +427,6 @@ namespace My {
 	// 00 01 02
 	// 10 11 12
 	// 20 21 22
-	//行列式
-	float Deteminant3x3f(Matrix3X3f& matrix) {
-
-		float result = (matrix[0][0] * matrix[1][1] * matrix[2][2] +
-			matrix[0][1] * matrix[1][2] * matrix[2][0] +
-			matrix[0][2] * matrix[1][0] * matrix[2][1]) -
-			(matrix[0][2] * matrix[1][1] * matrix[2][0] +
-				matrix[0][1] * matrix[1][0] * matrix[2][2] +
-				matrix[0][0] * matrix[1][2] * matrix[2][1]);
-
-		return result;
-	}
-	//伴随矩阵
-	Matrix3X3f& AdjointMatrix3x3f(Matrix3X3f& matrix) {
-
-		Matrix3X3f result;
-
-		result[0][0] = pow(-1, 2)*(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
-		result[0][1] = pow(-1, 3)*(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
-		result[0][2] = pow(-1, 4)*(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
-
-		result[1][0] = pow(-1, 3)*(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
-		result[1][1] = pow(-1, 4)*(matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
-		result[1][2] = pow(-1, 5)*(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]);
-
-		result[2][0] = pow(-1, 4)*(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]);
-		result[2][1] = pow(-1, 5)*(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]);
-		result[2][2] = pow(-1, 6)*(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]);
-
-
-		return result;
-	}
-
-
 	Matrix3X3f InverseMatrix3X3f(Matrix3X3f& matrix) {
 
 		Matrix3X3f result;
@@ -577,9 +543,9 @@ namespace My {
 	inline void TransformCoord(Vector3f& vector, const Matrix4X4f& matrix)
 	{
 		Vector3f result;
-		result.x = vector.x * (*(matrix[0] + 0)) + vector.y * (*(matrix[0] + 0)) + vector.z * (*(matrix[2] + 0));
-		result.y = vector.x * (*(matrix[0] + 1)) + vector.y * (*(matrix[0] + 1)) + vector.z * (*(matrix[2] + 1));
-		result.z = vector.x * (*(matrix[0] + 2)) + vector.y * (*(matrix[0] + 2)) + vector.z * (*(matrix[2] + 2));
+		result.x = vector.x * (*(matrix[0] + 0)) + vector.y * (*(matrix[1] + 0)) + vector.z * (*(matrix[2] + 0));
+		result.y = vector.x * (*(matrix[0] + 1)) + vector.y * (*(matrix[1] + 1)) + vector.z * (*(matrix[2] + 1));
+		result.z = vector.x * (*(matrix[0] + 2)) + vector.y * (*(matrix[1] + 2)) + vector.z * (*(matrix[2] + 2));
 
 		vector = result;
 	}
@@ -587,10 +553,10 @@ namespace My {
 	inline void Transform(Vector4f& vector, const Matrix4X4f& matrix)
 	{
 		Vector4f result;
-		result.x = vector.x * (*(matrix[0] + 0)) + vector.y * (*(matrix[0] + 0)) + vector.z * (*(matrix[2] + 0)) + vector.w * (*(matrix[3] + 0));
-		result.y = vector.x * (*(matrix[0] + 1)) + vector.y * (*(matrix[0] + 1)) + vector.z * (*(matrix[2] + 1)) + vector.w * (*(matrix[3] + 1));
-		result.z = vector.x * (*(matrix[0] + 2)) + vector.y * (*(matrix[0] + 2)) + vector.z * (*(matrix[2] + 2)) + vector.w * (*(matrix[3] + 2));
-		result.w = vector.x * (*(matrix[0] + 3)) + vector.y * (*(matrix[0] + 3)) + vector.z * (*(matrix[2] + 3)) + vector.w * (*(matrix[3] + 3));
+		result.x = vector.x * (*(matrix[0] + 0)) + vector.y * (*(matrix[1] + 0)) + vector.z * (*(matrix[2] + 0)) + vector.w * (*(matrix[3] + 0));
+		result.y = vector.x * (*(matrix[0] + 1)) + vector.y * (*(matrix[1] + 1)) + vector.z * (*(matrix[2] + 1)) + vector.w * (*(matrix[3] + 1));
+		result.z = vector.x * (*(matrix[0] + 2)) + vector.y * (*(matrix[1] + 2)) + vector.z * (*(matrix[2] + 2)) + vector.w * (*(matrix[3] + 2));
+		result.w = vector.x * (*(matrix[0] + 3)) + vector.y * (*(matrix[1] + 3)) + vector.z * (*(matrix[2] + 3)) + vector.w * (*(matrix[3] + 3));
 		vector = result;
 	}
 
