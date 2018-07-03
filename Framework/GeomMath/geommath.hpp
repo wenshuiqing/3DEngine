@@ -108,6 +108,7 @@ namespace My {
 			T data[4] = { 0 };
 			struct { T x, y, z, w; };
 			struct { T r, g, b, a; };
+			swizzle<My::Vector3Type, T, 0, 1, 2> xyz;
 			swizzle<My::Vector3Type, T, 0, 2, 1> xzy;
 			swizzle<My::Vector3Type, T, 1, 0, 2> yxz;
 			swizzle<My::Vector3Type, T, 1, 2, 0> yzx;
@@ -424,93 +425,7 @@ namespace My {
 		result = result / length;
 	}
 
-	// 00 01 02
-	// 10 11 12
-	// 20 21 22
-	Matrix3X3f InverseMatrix3X3f(Matrix3X3f& matrix) {
-
-		Matrix3X3f result;
-
-		float det = (matrix[0][0] * matrix[1][1] * matrix[2][2] +
-			matrix[0][1] * matrix[1][2] * matrix[2][0] +
-			matrix[0][2] * matrix[1][0] * matrix[2][1]) -
-			(matrix[0][2] * matrix[1][1] * matrix[2][0] +
-				matrix[0][1] * matrix[1][0] * matrix[2][2] +
-				matrix[0][0] * matrix[1][2] * matrix[2][1]);
-		det = 1 / det;
-
-
-		result[0][0] = det * pow(-1, 2)*(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
-		result[0][1] = det * pow(-1, 3)*(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
-		result[0][2] = det * pow(-1, 4)*(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
-
-		result[1][0] = det * pow(-1, 3)*(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
-		result[1][1] = det * pow(-1, 4)*(matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
-		result[1][2] = det * pow(-1, 5)*(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]);
-
-		result[2][0] = det * pow(-1, 4)*(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]);
-		result[2][1] = det * pow(-1, 5)*(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]);
-		result[2][2] = det * pow(-1, 6)*(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]);
-
-
-		return result;
-	}
-
-
-
-	Matrix4X4f InverseMatrix4X4f(Matrix4X4f& matrix) {
-		Matrix4X4f result = matrix;
-
-		float A2323 = matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2];
-		float A1323 = matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1];
-		float A1223 = matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1];
-		float A0323 = matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0];
-		float A0223 = matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0];
-		float A0123 = matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0];
-		float A2313 = matrix[1][2] * matrix[3][3] - matrix[1][3] * matrix[3][2];
-		float A1313 = matrix[1][1] * matrix[3][3] - matrix[1][3] * matrix[3][1];
-		float A1213 = matrix[1][1] * matrix[3][2] - matrix[1][2] * matrix[3][1];
-		float A2312 = matrix[1][2] * matrix[2][3] - matrix[1][3] * matrix[2][2];
-		float A1312 = matrix[1][1] * matrix[2][3] - matrix[1][3] * matrix[2][1];
-		float A1212 = matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1];
-		float A0313 = matrix[1][0] * matrix[3][3] - matrix[1][3] * matrix[3][0];
-		float A0213 = matrix[1][0] * matrix[3][2] - matrix[1][2] * matrix[3][0];
-		float A0312 = matrix[1][0] * matrix[2][3] - matrix[1][3] * matrix[2][0];
-		float A0212 = matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0];
-		float A0113 = matrix[1][0] * matrix[3][1] - matrix[1][1] * matrix[3][0];
-		float A0112 = matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0];
-
-		//计算行列式的值
-		float det = matrix[0][0] * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223)
-			- matrix[0][1] * (matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223)
-			+ matrix[0][2] * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123)
-			- matrix[0][3] * (matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
-		det = 1 / det;
-
-
-
-
-		//Aij = ((-1)^(i+j)*Mij)T   
-		result[0][0] = det * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223);
-		result[0][1] = det * -(matrix[0][1] * A2323 - matrix[0][2] * A1323 + matrix[0][3] * A1223);
-		result[0][2] = det * (matrix[0][1] * A2313 - matrix[0][2] * A1313 + matrix[0][3] * A1213);
-		result[0][3] = det * -(matrix[0][1] * A2312 - matrix[0][2] * A1312 + matrix[0][3] * A1212);
-		result[1][0] = det * -(matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223);
-		result[1][1] = det * (matrix[0][0] * A2323 - matrix[0][2] * A0323 + matrix[0][3] * A0223);
-		result[1][2] = det * -(matrix[0][0] * A2313 - matrix[0][2] * A0313 + matrix[0][3] * A0213);
-		result[1][3] = det * (matrix[0][0] * A2312 - matrix[0][2] * A0312 + matrix[0][3] * A0212);
-		result[2][0] = det * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123);
-		result[2][1] = det * -(matrix[0][0] * A1323 - matrix[0][1] * A0323 + matrix[0][3] * A0123);
-		result[2][2] = det * (matrix[0][0] * A1313 - matrix[0][1] * A0313 + matrix[0][3] * A0113);
-		result[2][3] = det * -(matrix[0][0] * A1312 - matrix[0][1] * A0312 + matrix[0][3] * A0112);
-		result[3][0] = det * -(matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
-		result[3][1] = det * (matrix[0][0] * A1223 - matrix[0][1] * A0223 + matrix[0][2] * A0123);
-		result[3][2] = det * -(matrix[0][0] * A1213 - matrix[0][1] * A0213 + matrix[0][2] * A0113);
-		result[3][3] = det * (matrix[0][0] * A1212 - matrix[0][1] * A0212 + matrix[0][2] * A0112);
-
-		return result;
-	}
-
+	
 
 
 	inline void MatrixRotationYawPitchRoll(Matrix4X4f& matrix, const float yaw, const float pitch, const float roll)
@@ -737,5 +652,94 @@ namespace My {
 
 		matrix = rotation;
 	}
+
+
+	// 00 01 02
+	// 10 11 12
+	// 20 21 22
+	inline Matrix3X3f InverseMatrix3X3f(Matrix3X3f& matrix) {
+
+		Matrix3X3f result;
+
+		float det = (matrix[0][0] * matrix[1][1] * matrix[2][2] +
+			matrix[0][1] * matrix[1][2] * matrix[2][0] +
+			matrix[0][2] * matrix[1][0] * matrix[2][1]) -
+			(matrix[0][2] * matrix[1][1] * matrix[2][0] +
+				matrix[0][1] * matrix[1][0] * matrix[2][2] +
+				matrix[0][0] * matrix[1][2] * matrix[2][1]);
+		det = 1 / det;
+
+
+		result[0][0] = det * pow(-1, 2)*(matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]);
+		result[0][1] = det * pow(-1, 3)*(matrix[0][1] * matrix[2][2] - matrix[0][2] * matrix[2][1]);
+		result[0][2] = det * pow(-1, 4)*(matrix[0][1] * matrix[1][2] - matrix[1][1] * matrix[0][2]);
+
+		result[1][0] = det * pow(-1, 3)*(matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2]);
+		result[1][1] = det * pow(-1, 4)*(matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0]);
+		result[1][2] = det * pow(-1, 5)*(matrix[0][0] * matrix[1][2] - matrix[1][0] * matrix[0][2]);
+
+		result[2][0] = det * pow(-1, 4)*(matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1]);
+		result[2][1] = det * pow(-1, 5)*(matrix[0][0] * matrix[2][1] - matrix[2][0] * matrix[0][1]);
+		result[2][2] = det * pow(-1, 6)*(matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]);
+
+
+		return result;
+	}
+
+
+
+	inline Matrix4X4f InverseMatrix4X4f(Matrix4X4f& matrix) {
+		Matrix4X4f result = matrix;
+
+		float A2323 = matrix[2][2] * matrix[3][3] - matrix[2][3] * matrix[3][2];
+		float A1323 = matrix[2][1] * matrix[3][3] - matrix[2][3] * matrix[3][1];
+		float A1223 = matrix[2][1] * matrix[3][2] - matrix[2][2] * matrix[3][1];
+		float A0323 = matrix[2][0] * matrix[3][3] - matrix[2][3] * matrix[3][0];
+		float A0223 = matrix[2][0] * matrix[3][2] - matrix[2][2] * matrix[3][0];
+		float A0123 = matrix[2][0] * matrix[3][1] - matrix[2][1] * matrix[3][0];
+		float A2313 = matrix[1][2] * matrix[3][3] - matrix[1][3] * matrix[3][2];
+		float A1313 = matrix[1][1] * matrix[3][3] - matrix[1][3] * matrix[3][1];
+		float A1213 = matrix[1][1] * matrix[3][2] - matrix[1][2] * matrix[3][1];
+		float A2312 = matrix[1][2] * matrix[2][3] - matrix[1][3] * matrix[2][2];
+		float A1312 = matrix[1][1] * matrix[2][3] - matrix[1][3] * matrix[2][1];
+		float A1212 = matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1];
+		float A0313 = matrix[1][0] * matrix[3][3] - matrix[1][3] * matrix[3][0];
+		float A0213 = matrix[1][0] * matrix[3][2] - matrix[1][2] * matrix[3][0];
+		float A0312 = matrix[1][0] * matrix[2][3] - matrix[1][3] * matrix[2][0];
+		float A0212 = matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0];
+		float A0113 = matrix[1][0] * matrix[3][1] - matrix[1][1] * matrix[3][0];
+		float A0112 = matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0];
+
+		//计算行列式的值
+		float det = matrix[0][0] * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223)
+			- matrix[0][1] * (matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223)
+			+ matrix[0][2] * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123)
+			- matrix[0][3] * (matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
+		det = 1 / det;
+
+
+
+
+		//Aij = ((-1)^(i+j)*Mij)T   
+		result[0][0] = det * (matrix[1][1] * A2323 - matrix[1][2] * A1323 + matrix[1][3] * A1223);
+		result[0][1] = det * -(matrix[0][1] * A2323 - matrix[0][2] * A1323 + matrix[0][3] * A1223);
+		result[0][2] = det * (matrix[0][1] * A2313 - matrix[0][2] * A1313 + matrix[0][3] * A1213);
+		result[0][3] = det * -(matrix[0][1] * A2312 - matrix[0][2] * A1312 + matrix[0][3] * A1212);
+		result[1][0] = det * -(matrix[1][0] * A2323 - matrix[1][2] * A0323 + matrix[1][3] * A0223);
+		result[1][1] = det * (matrix[0][0] * A2323 - matrix[0][2] * A0323 + matrix[0][3] * A0223);
+		result[1][2] = det * -(matrix[0][0] * A2313 - matrix[0][2] * A0313 + matrix[0][3] * A0213);
+		result[1][3] = det * (matrix[0][0] * A2312 - matrix[0][2] * A0312 + matrix[0][3] * A0212);
+		result[2][0] = det * (matrix[1][0] * A1323 - matrix[1][1] * A0323 + matrix[1][3] * A0123);
+		result[2][1] = det * -(matrix[0][0] * A1323 - matrix[0][1] * A0323 + matrix[0][3] * A0123);
+		result[2][2] = det * (matrix[0][0] * A1313 - matrix[0][1] * A0313 + matrix[0][3] * A0113);
+		result[2][3] = det * -(matrix[0][0] * A1312 - matrix[0][1] * A0312 + matrix[0][3] * A0112);
+		result[3][0] = det * -(matrix[1][0] * A1223 - matrix[1][1] * A0223 + matrix[1][2] * A0123);
+		result[3][1] = det * (matrix[0][0] * A1223 - matrix[0][1] * A0223 + matrix[0][2] * A0123);
+		result[3][2] = det * -(matrix[0][0] * A1213 - matrix[0][1] * A0213 + matrix[0][2] * A0113);
+		result[3][3] = det * (matrix[0][0] * A1212 - matrix[0][1] * A0212 + matrix[0][2] * A0112);
+
+		return result;
+	}
+
 }
 
