@@ -13,16 +13,16 @@ namespace My {
 
 int main(int , char** )
 {
-    g_pMemoryManager->Initialize();
-    g_pAssetLoader->Initialize();
+    g_pMemoryManager->Init();
+    g_pAssetLoader->Init();
 
     g_pAssetLoader->AddSearchPath("/app0");
     string shader_pgm = g_pAssetLoader->SyncOpenAndReadTextFileToString("Shaders/copy.vs");
 
     cout << shader_pgm;
 
-    g_pAssetLoader->Finalize();
-    g_pMemoryManager->Finalize();
+    g_pAssetLoader->Destroy();
+    g_pMemoryManager->Destroy();
 
     delete g_pAssetLoader;
     delete g_pMemoryManager;

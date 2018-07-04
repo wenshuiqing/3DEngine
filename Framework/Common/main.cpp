@@ -1,11 +1,10 @@
-#include <stdio.h>
+#include <cstdio>
+#include <chrono>
 #include <thread>
-#include "IApplication.hpp"
-#include "GraphicsManager.hpp"
-#include "MemoryManager.hpp"
-#include "AssetLoader.hpp"
-#include "SceneManager.hpp"
+#include "BaseApplication.hpp"
+
 using namespace My;
+using namespace std;
 
 int main(int argc, char** argv) {
 	int ret;
@@ -30,7 +29,14 @@ int main(int argc, char** argv) {
 		printf("Scene Manager Initialize failed, will exit now.");
 		return ret;
 	}
-	g_pSceneManager->LoadScene("Scene/test.ogex");
+	string scene_file_name = "Scene/aili.ogex";
+	if (argc > 1) {
+		scene_file_name = argv[1];
+	}
+	if ((ret = g_pSceneManager->LoadScene(scene_file_name.c_str())) != 0) {
+		printf("Unable to load scene: %s\n", scene_file_name.c_str());
+		return ret;
+	}
 
 	if ((ret = g_pGraphicsManager->Init()) != 0) {
 		printf("Graphics Manager Initialize failed, will exit now.");
