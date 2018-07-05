@@ -425,7 +425,7 @@ namespace My {
 		result = result / length;
 	}
 
-	
+
 
 
 	inline void MatrixRotationYawPitchRoll(Matrix4X4f& matrix, const float yaw, const float pitch, const float roll)
@@ -741,5 +741,65 @@ namespace My {
 		return result;
 	}
 
+
+	typedef Matrix<float, 8, 8> DCTFactor;
+	typedef Matrix<int, 8, 8> JEPGData;
+
+	inline void EncodeDCT8X8(DCTFactor &result, JEPGData indata) {
+		float one_over_four = 1.0f / 4.0f;
+		float PI_over_sixteen = PI / 16.0f;
+		float one_over_sqrt2 = 1.0f / sqrt(2.0f);
+		int length = 8;
+
+		for (size_t u = 0; u < length; u++)
+		{
+			float ufactor = (u == 0) ? one_over_sqrt2 : 1.0f;
+			for (size_t v = 0; v < length; v++)
+			{
+				float vfactor = (v == 0) ? one_over_sqrt2 : 1.0f;;
+
+				float temp = 0;
+				for (size_t x = 0; x < length; x++)
+				{
+					for (size_t y = 0; y < length; y++)
+					{
+						temp += indata[x][y] * cos((2 * x + 1)*u*PI_over_sixteen)*cos((2 * y + 1)*v*PI_over_sixteen);
+					}
+				}
+				result[u][v] = one_over_four * ufactor*vfactor*temp;
+			}
+		}
+	}
+
+
+	inline void DecodeDCT8X8(JEPGData& outdata, DCTFactor factor) {
+		float one_over_four = 1.0f / 4.0f;
+		float PI_over_sixteen = PI / 16.0f;
+		float one_over_sqrt2 = 1.0f / sqrt(2.0f);
+		int length = 8;
+
+		for (size_t x = 0; x < length; x++)
+		{
+			for (size_t y = 0; y < length; y++)
+			{
+				float temp = 0;
+				for (size_t u = 0; u < length; u++)
+				{
+					float ufactor = (u == 0) ? one_over_sqrt2 : 1.0f;
+					for (size_t v = 0; v < length; v++)
+					{
+						float vfactor = (v == 0) ? one_over_sqrt2 : 1.0f;;
+						temp += ufactor * vfactor* factor[u][v] * cos((2 * x + 1)*u*PI_over_sixteen)*cos((2 * y + 1)*v*PI_over_sixteen);
+					}
+				}
+				outdata[x][y] = round(one_over_four * temp);
+			}
+		}
+	}
+
+
+
+
 }
+
 
