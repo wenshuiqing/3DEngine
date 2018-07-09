@@ -54,7 +54,7 @@ namespace My {
 					uint8_t* pSourceData = buffer.m_pData + pFileHeader->BitsOffset;
 					for (int32_t y = img.Height - 1; y >= 0; y--) {
 						for (uint32_t x = 0; x < img.Width; x++) {
-							(img.data + img.Width * (img.Height - y - 1) + x)->bgra = *reinterpret_cast<R8G8B8A8Unorm*>(pSourceData + img.pitch * y + x * (img.bitcount >> 3));
+							reinterpret_cast<R8G8B8A8Unorm*>((reinterpret_cast<uint8_t*>(img.data) + img.Width * (img.Height - y - 1) + x))->bgra = *reinterpret_cast<R8G8B8A8Unorm*>(pSourceData + img.pitch * y + x * (img.bitcount >> 3));
 						}
 					}
 				}

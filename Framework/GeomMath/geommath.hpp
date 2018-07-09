@@ -216,7 +216,7 @@ namespace My {
 	}
 
 	template <template <typename> class TT, typename T>
-	inline T& DotProduct(const TT<T>& vec1, const TT<T>& vec2)
+	inline T DotProduct(const TT<T>& vec1, const TT<T>& vec2)
 	{
 		T result = 0;
 		size_t length = countof(vec1.data);
@@ -237,7 +237,7 @@ namespace My {
 
 
 
-
+	
 	// Matrix
 
 	template <typename T, int ROWS, int COLS>
@@ -327,6 +327,23 @@ namespace My {
 
 		return result;
 	}
+	template <typename T, int ROWS, int COLS>
+	void MatrixMulByElement(Matrix<T, ROWS, COLS>& result, const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
+	{
+		for (size_t i = 0; i < ROWS; i++)
+		{
+			for (size_t j = 0; j < COLS; j++)
+			{
+				result[i][j] = matrix1[i][j] * matrix2[i][j];
+			}
+		}
+	}
+
+	template <int ROWS, int COLS>
+	void MatrixMulByElementi32(Matrix<int32_t, ROWS, COLS>& result, const Matrix<int32_t, ROWS, COLS>& matrix1, const Matrix<int32_t, ROWS, COLS>& matrix2)
+	{
+		MatrixMulByElement(matrix1, matrix2, result, countof(result.data));
+	}
 
 	template <typename T, int Da, int Db, int Dc>
 	void MatrixMultiply(Matrix<T, Da, Dc>& result, const Matrix<T, Da, Db>& matrix1, const Matrix<T, Db, Dc>& matrix2)
@@ -409,7 +426,7 @@ namespace My {
 	}
 
 	template <typename T>
-	inline T& Normalize(T& value)
+	inline T Normalize(T& value)
 	{
 		T result;
 		float length = sqrt(DotProduct(value, value));
@@ -742,15 +759,16 @@ namespace My {
 	}
 
 
-	typedef Matrix<float, 8, 8> DCTFactor;
-	typedef Matrix<int, 8, 8> JEPGData;
+	typedef Matrix<float, 8, 8> Matrix8X8f;
 
-	inline void EncodeDCT8X8(DCTFactor &result, JEPGData indata) {
+
+	inline Matrix8X8f DCT8X8( Matrix8X8f indata) {
 		float one_over_four = 1.0f / 4.0f;
 		float PI_over_sixteen = PI / 16.0f;
 		float one_over_sqrt2 = 1.0f / sqrt(2.0f);
 		int length = 8;
 
+		Matrix8X8f result;
 		for (size_t u = 0; u < length; u++)
 		{
 			float ufactor = (u == 0) ? one_over_sqrt2 : 1.0f;
@@ -769,15 +787,17 @@ namespace My {
 				result[u][v] = one_over_four * ufactor*vfactor*temp;
 			}
 		}
+
+		return result;
 	}
 
 
-	inline void DecodeDCT8X8(JEPGData& outdata, DCTFactor factor) {
+	inline Matrix8X8f IDCT8X8( Matrix8X8f factor) {
 		float one_over_four = 1.0f / 4.0f;
 		float PI_over_sixteen = PI / 16.0f;
 		float one_over_sqrt2 = 1.0f / sqrt(2.0f);
 		int length = 8;
-
+		Matrix8X8f result;
 		for (size_t x = 0; x < length; x++)
 		{
 			for (size_t y = 0; y < length; y++)
@@ -792,9 +812,11 @@ namespace My {
 						temp += ufactor * vfactor* factor[u][v] * cos((2 * x + 1)*u*PI_over_sixteen)*cos((2 * y + 1)*v*PI_over_sixteen);
 					}
 				}
-				outdata[x][y] = round(one_over_four * temp);
+				result[x][y] = round(one_over_four * temp);
 			}
 		}
+		 
+		return result;
 	}
 
 

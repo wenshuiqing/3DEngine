@@ -132,7 +132,7 @@ My::Buffer My::AssetLoader::SyncOpenAndReadBinary(const char *filePath)
 		size_t length = GetSize(fp);
 
 		pBuff = new Buffer(length);
-		fread(pBuff->m_pData, length, 1, static_cast<FILE*>(fp));
+		fread(pBuff->m_pData, 1, length, static_cast<FILE*>(fp));
 
 		CloseFile(fp);
 	}

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "geommath.hpp"
-
+#include "portable.hpp"
 using namespace std;
 using namespace My;
 
@@ -133,6 +133,76 @@ void matrix_test()
 	Matrix4X4f E = mvp * rtemp;
 	cout << "E:" << E;
 
+	Matrix4X4f mmm = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+	Matrix4X4f mmf = { {{
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0}
+		}} };
+
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		for (size_t j = 0; j < 4; j++)
+		{
+			cout << mmm[i][j] << +"   ";
+		}
+		cout << endl;
+	}
+
+	Matrix8X8f jdata = { { {
+		{ -76, -73, -67, -62, -58, -67, -64, -55 },
+	{ -65, -69, -73, -38, -19, -43, -59, -56 },
+	{ -66, -69, -60, -15,  16, -24, -62, -55 },
+	{ -65, -70, -57, -6,  26, -22, -58, -59 },
+	{ -61, -67, -60, -24, -2, -40, -60, -58 },
+	{ -49, -63, -68, -58, -51, -60, -70, -53 },
+	{ -43, -57, -64, -69, -73, -67, -63, -45 },
+	{ -41, -49, -59, -60, -63, -52, -50, -34 }
+		} } };
+
+	Matrix8X8f dctf;
+
+	dctf = DCT8X8(jdata);
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		for (size_t j = 0; j < 8; j++)
+		{
+			cout << dctf[i][j] << +"   ";
+		}
+		cout << endl;
+	}
+
+	Matrix8X8f dctf1 = { { {
+		{ -416, -33, -60,  32,  48, -40,   0,   0 },
+	{ 0, -24, -56,  19,  26,   0,   0,   0 },
+	{ -42,  13,  80, -24, -40,   0,   0,   0 },
+	{ -42,  17,  44, -29,   0,   0,   0,   0 },
+	{ 18,   0,   0,   0,   0,   0,   0,   0 },
+	{ 0,   0,   0,   0,   0,   0,   0,   0 },
+	{ 0,   0,   0,   0,   0,   0,   0,   0 },
+	{ 0,   0,   0,   0,   0,   0,   0,   0 }
+		} } };
+
+	Matrix8X8f jdata1;
+
+	jdata1 = IDCT8X8(dctf1);
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		for (size_t j = 0; j < 8; j++)
+		{
+			cout << jdata1[i][j] << +"   ";
+		}
+		cout << endl;
+	}
+
+
+	int a = endian_net_unsigned_int(2);
+	int b = endian_native_unsigned_int(a);
 	cin.get();
 
 }

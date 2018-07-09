@@ -2,8 +2,8 @@
 #include "geommath.hpp"
 
 namespace My {
-	typedef Vector3Type<float> RGB;
-	typedef Vector3Type<float> YCbCr;
+	typedef Vector3Type<float> RGBf;
+	typedef Vector3Type<float> YCbCrf;
 
 	const Matrix<float, 4, 4> RGB2YCbCr = { { {
 		{ 0.299f, -0.168736f,  0.5f     ,    0.0f },
@@ -19,20 +19,21 @@ namespace My {
 	{ -179.456f,  135.458816f, -226.816f,    0.0f },
 		} } };
 
-	YCbCr ConvertRGB2YCbCr(const RGB& rgb)
+	inline YCbCrf ConvertRGB2YCbCr(const RGBf& rgb)
 	{
-		YCbCr result = rgb;
-		TransformCoord(result, RGB2YCbCr);
-		return result;
+		Vector4f result(rgb.r, rgb.g, rgb.b, 1.0f);
+		Transform(result, RGB2YCbCr);
+		return YCbCrf(std::clamp<float>(result.x + 0.5f, 0.0f, 255.0f),
+			std::clamp<float>(result.y + 0.5f, 0.0f, 255.0f),
+			std::clamp<float>(result.z + 0.5f, 0.0f, 255.0f));
 	}
 
-	RGB ConvertYCbCr2RGB(const YCbCr& ycbcr)
+	inline RGBf ConvertYCbCr2RGB(const YCbCrf& ycbcr)
 	{
-		RGB result = ycbcr;
-		TransformCoord(result, YCbCr2RGB);
-		return result;
+		Vector4f result(ycbcr.x, ycbcr.y, ycbcr.z, 1.0f);
+		Transform(result, YCbCr2RGB);
+		return RGBf(std::clamp<float>(result.r + 0.5f, 0.0f, 255.0f),
+			std::clamp<float>(result.g + 0.5f, 0.0f, 255.0f),
+			std::clamp<float>(result.b + 0.5f, 0.0f, 255.0f));
 	}
-
-
-
 }

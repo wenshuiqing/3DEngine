@@ -7,7 +7,7 @@
 
 namespace My {
 
-	interface ImageParse
+	Interface ImageParse
 	{
 		virtual Image Parser(const Buffer& buffer) = 0;
 	};

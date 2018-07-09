@@ -23,6 +23,13 @@ void My::BaseApplication::Update(){
 
 }
 
+
+void My::BaseApplication::SetCommandLineParameters(int argc, char** argv)
+{
+	m_nArgC = argc;
+	m_ppArgV = argv;
+}
+
 bool My::BaseApplication::IsQuit(){
 
 	return m_bQuit;

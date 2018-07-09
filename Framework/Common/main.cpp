@@ -9,16 +9,16 @@ using namespace std;
 int main(int argc, char** argv) {
 	int ret;
 
+	if ((ret = g_pMemoryManager->Init()) != 0) {
+		printf("Memory Manager Initialize failed, will exit now.");
+		return ret;
+	}
 	if ((ret = g_pApp->Init()) != 0) {
 		printf("App Initialize failed, will exit now.");
 		return ret;
 	}
 
-	if ((ret = g_pMemoryManager->Init()) != 0) {
-		printf("Memory Manager Initialize failed, will exit now.");
-		return ret;
-	}
-
+	g_pApp->SetCommandLineParameters(argc, argv);
 
 	if ((ret = g_pAssetLoader->Init()) != 0) {
 		printf("Asset Loader Initialize failed, will exit now.");

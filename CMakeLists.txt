@@ -49,6 +49,17 @@ int main(int argc, char** argv)
 }
 "
  HAVE_MAKE_UNIQUE)
+CHECK_CXX_SOURCE_COMPILES(
+"#include <algorithm>
+
+int main(int argc, char** argv)
+{
+    int result = -1;
+    result = std::clamp(result, 0, 1);
+    return result;
+}
+"
+ HAVE_MAKE_UNIQUE)
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
 
 add_subdirectory(Framework)#包含子目录
