@@ -200,9 +200,15 @@ void matrix_test()
 		cout << endl;
 	}
 
+	unsigned int sada = 2;
+	unsigned int a = endian_net_unsigned_int(sada);
+	unsigned int b = endian_native_unsigned_int(a);
 
-	int a = endian_net_unsigned_int(2);
-	int b = endian_native_unsigned_int(a);
+	int as = 8;
+	const int * pas = &as;
+
+	cout << *pas++ << endl;
+	cout << *pas++ << endl;
 	cin.get();
 
 }

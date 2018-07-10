@@ -89,6 +89,7 @@ namespace My {
 			swizzle<My::Vector3Type, T, 2, 0, 1> zxy;
 			swizzle<My::Vector3Type, T, 1, 2, 0> yzx;
 			swizzle<My::Vector3Type, T, 2, 1, 0> zyx;
+			swizzle<My::Vector3Type, T, 0, 1, 2> rgb;
 		};
 
 		Vector3Type<T>() {};
@@ -114,7 +115,10 @@ namespace My {
 			swizzle<My::Vector3Type, T, 1, 2, 0> yzx;
 			swizzle<My::Vector3Type, T, 2, 0, 1> zxy;
 			swizzle<My::Vector3Type, T, 2, 1, 0> zyx;
+			swizzle<My::Vector3Type, T, 0, 1, 2> rgb;
+			swizzle<My::Vector4Type, T, 0, 1, 2, 3> rgba;
 			swizzle<My::Vector4Type, T, 2, 1, 0, 3> bgra;
+
 		};
 
 		Vector4Type<T>() {};

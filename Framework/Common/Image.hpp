@@ -4,7 +4,7 @@
 
 namespace My {
 
-	typedef struct _Image
+	struct Image
 	{
 		uint32_t Width;
 		uint32_t Height;
@@ -13,6 +13,6 @@ namespace My {
 		uint32_t pitch;
 		size_t data_size;
 
-	} Image;
+	};
 	std::ostream& operator<<(std::ostream& out, const Image& image);
 }

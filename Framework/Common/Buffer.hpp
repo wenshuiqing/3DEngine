@@ -53,15 +53,15 @@ namespace My {
 			return *this;
 		}
 
-		uint8_t* GetData(void) { return m_pData; };
-		const uint8_t* GetData(void) const { return m_pData; };
+
+		uint8_t* GetData(void) const { return m_pData; };
 
 		size_t GetDataSize()const {
 			return m_szSize;
 		}
 
 		~Buffer() { if (m_pData) g_pMemoryManager->Free(m_pData, m_szSize); m_pData = nullptr; }
-	public:
+	protected:
 		uint8_t * m_pData;
 		size_t m_szSize;
 		size_t m_szAlignment;

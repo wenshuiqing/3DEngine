@@ -1,6 +1,6 @@
 #pragma once
 #include "geommath.hpp"
-
+#include "portable.hpp"
 namespace My {
 	typedef Vector3Type<float> RGBf;
 	typedef Vector3Type<float> YCbCrf;
