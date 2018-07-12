@@ -1,39 +1,40 @@
 #pragma once
+#include <new>
 #include "IRuntimeModule.hpp"
 #include "Allocator.hpp"
-#include <new>
 
 namespace My {
-
 	class MemoryManager : implements IRuntimeModule
 	{
 	public:
-
-		template<typename T, typename... Arguments>
-		T* New(Arguments...paramenters) {
+		template<class T, typename... Arguments>
+		T* New(Arguments... parameters)
+		{
 			return new (Allocate(sizeof(T))) T(parameters...);
 		}
 
-		template<typename T>
-		void Delete(T *p)
+		template<class T>
+		void Delete(T* p)
 		{
-			reinterpret_cast<T*>(p)->~T();
+			p->~T();
 			Free(p, sizeof(T));
 		}
+
 	public:
-		virtual ~MemoryManager() {};
+		virtual ~MemoryManager() {}
 
 		virtual int Init();
-		virtual void Update();
 		virtual void Destroy();
+		virtual void Update();
 
 		void* Allocate(size_t size);
 		void* Allocate(size_t size, size_t alignment);
-		void Free(void* p, size_t size);
-
+		void  Free(void* p, size_t size);
 	private:
 		static size_t*        m_pBlockSizeLookup;
 		static Allocator*     m_pAllocators;
+		static bool           m_bInitialized;
+
 	private:
 		static Allocator* LookUpAllocator(size_t size);
 
@@ -41,3 +42,4 @@ namespace My {
 
 	extern MemoryManager*   g_pMemoryManager;
 }
+

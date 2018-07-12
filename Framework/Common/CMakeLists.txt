@@ -6,6 +6,7 @@ Allocator.cpp
 BaseApplication.cpp
 GraphicsManager.cpp
 SceneManager.cpp
+InputManager.cpp
 MemoryManager.cpp
 Scene.cpp
 SceneObject.cpp

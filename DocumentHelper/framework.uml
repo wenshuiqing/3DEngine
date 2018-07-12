@@ -2,10 +2,6 @@
 
 
 Main --> IApplication
-Main --> SceneManager
-Main --> MemoryManager
-Main --> GraphicsManager
-Main --> AssetLoader
 class Main{
 
 }
@@ -18,7 +14,7 @@ interface IRuntimeModule{
 }
 
 IRuntimeModule <|.. IApplication
-IApplication -- GfxConfiguration
+IApplication --> GfxConfiguration
 interface IApplication{
     virtual int Init() = 0
 	virtual void Destroy() = 0
@@ -37,6 +33,12 @@ interface ImageParse{
 
 IApplication <|.. BaseApplication
 
+BaseApplication *-- MemoryManager
+BaseApplication *-- InputManager
+BaseApplication *-- GraphicsManager
+BaseApplication *-- AssetLoader
+BaseApplication *-- SceneManager
+
 class BaseApplication{
     --construcor--
     + BaseApplication(GfxConfiguration& cfg)
@@ -46,18 +48,31 @@ class BaseApplication{
 	+ virtual void Update()
 	+ virtual bool IsQuit()
 	+ inline GfxConfiguration& GetConfiguration()
-
+	+ virtual int LoadScene()
 	# virtual void OnDraw()
 	# static bool m_bQuit
 	# GfxConfiguration m_Config
 }
 
 IRuntimeModule <|.. GraphicsManager
+GraphicsManager --> SceneManager
 class GraphicsManager{
     virtual int Init()
     virtual void Destroy()
     virtual void Update()
 
+	# bool SetPerFrameShaderParameters()
+	# bool SetPerBatchShaderParameters(const char* paramName, const Matrix4X4f& param)
+	# bool SetPerBatchShaderParameters(const char* paramName, const Vector3f& param)
+	# bool SetPerBatchShaderParameters(const char* paramName, const float param)
+	# bool SetPerBatchShaderParameters(const char* paramName, const int param)
+
+	# void InitConstants()
+	# bool InitializeShader(const char* vsFilename, const char* fsFilename)
+	# void InitializeBuffers()
+	# void CalculateCameraMatrix()
+	# void CalculateLights()
+	# void RenderBuffers()
 }
 
 class Allocator{
@@ -96,6 +111,18 @@ ImageParse <|.. BmpParser
 class BmpParser{
     virtual Image Parser(const Buffer& buffer)
 }
+ImageParse <|.. PngParser
+class PngParser{
+    virtual Image Parser(const Buffer& buffer)
+}
+ImageParse <|.. TgaParser
+class TgaParser{
+    virtual Image Parser(const Buffer& buffer)
+}
+ImageParse <|.. JepgParser
+class JepgParser{
+    virtual Image Parser(const Buffer& buffer)
+}
 
 
 BaseApplication <|-- WindowApplication
@@ -108,15 +135,6 @@ class LinuxApplication{
 }
 WindowApplication <|-- OpenGLApplication
 WindowApplication <|-- D3D12Appliacation
-D3D12Appliacation --> SceneManager
-D3D12Appliacation --> MemoryManager
-D3D12Appliacation --> GraphicsManager
-D3D12Appliacation --> AssetLoader
-
-OpenGLApplication --> SceneManager
-OpenGLApplication --> MemoryManager
-OpenGLApplication --> GraphicsManager
-OpenGLApplication --> AssetLoader
 
 GraphicsManager <|-- D3D12GraphicsManager
 D3D12GraphicsManager ..> SceneManager
@@ -140,7 +158,7 @@ interface SceneParser{
 	virtual Scene Parse(const std::string& buf)
 }
 SceneParser <|.. OgexParser 
-OgexParser "1"-->"0..*"BaseSceneObject
+
 class OgexParser{
 	virtual Scene Parse(const std::string& buf)
 }
@@ -157,6 +175,9 @@ BaseSceneObject <|-- SceneObjectGeometry
 BaseSceneObject <|-- SceneObjectLight
 BaseSceneObject <|-- SceneObjectCamera
 
+SceneObjectTexture ..> Image
+SceneObjectTexture ..> ImageParse
+
 SceneObjectCamera <|-- SceneobjectOrthgonalCamera
 SceneObjectCamera <|-- SceneObjectPerspectiveCamera
 
@@ -168,25 +189,36 @@ SceneObjectTransform <|-- SceneObjectRotation
 SceneObjectTransform <|-- SceneObjectScale
 
 SceneObjectGeometry "1"-->"0..*" SceneObjectMesh
+SceneObjectMesh "1"-->"0..*" SceneObjectIndexArray
+SceneObjectMesh "1"-->"0..*" SceneObjectVertexArray
+
 
 IRuntimeModule <|.. SceneManager
-SceneManager ..>Scene
+SceneManager -->Scene
 SceneManager ..> OgexParser
 class SceneManager{
-	Scene LoadScene(string name)
+	+ Scene LoadScene(string name)
+	+ int LoadScene(const char* scene_file_name);
+
+	+ const Scene& GetSceneForRendering();
+
+	+ void ResetScene();
+
+	+ bool IsSceneChanged();
+	+ void NotifySceneIsRenderingQueued();
+
+	# bool LoadOgexScene(string)
+
 }
 SceneManager --> BaseSceneNode
 SceneManager ..> AssetLoader
 
 Scene "1"-->"0..*"  BaseSceneNode
-Scene "1"-->"0..*"  SceneObjectMesh
-Scene "1"-->"0..*"  SceneObjectTexture
-Scene "1"-->"0..*"  SceneObjectMaterial
-Scene "1"-->"0..*"  SceneObjectGeometry
-Scene "1"-->"0..*"  SceneObjectLight
-Scene "1"-->"0..*"  SceneObjectCamera
+Scene "1"-->"0..*"  BaseSceneObject
+
 class Scene{
 	BaseSceneObject GetSceneObject()
+	BaseSceneNode GetSceneNode()
 } 
 
 

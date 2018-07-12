@@ -37,12 +37,13 @@ namespace My {
 }
 
 namespace My {
-	GfxConfiguration config(8, 8, 8, 8, 32, 0, 0, 1024, 512, L"Texture Load Test (Windows)");
+	GfxConfiguration config(8, 8, 8, 8, 32, 0, 0, 1024, 512, "Texture Load Test (Windows)");
 	IApplication* g_pApp = static_cast<IApplication*>(new TestApplication(config));
 	GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new TestGraphicsManager);
 	MemoryManager*   g_pMemoryManager = static_cast<MemoryManager*>(new MemoryManager);
 	AssetLoader*     g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
 	SceneManager*    g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
+	InputManager*    g_pInputManager = static_cast<InputManager*>(new InputManager);
 }
 
 int My::TestApplication::Init()

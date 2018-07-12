@@ -3,20 +3,11 @@
 
 using namespace My;
 
-int My::WindowsApplication::Init()
+void WindowsApplication::CreateMainWindow()
 {
-	int result;
-
-	result = BaseApplication::Init();
-
-	if (result != 0)
-		exit(result);
-
 	// get the HINSTANCE of the Console Program
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 
-	// the handle for the window, filled by a function
-	HWND hWnd;
 	// this struct holds information for the window class
 	WNDCLASSEX wc;
 
@@ -30,15 +21,15 @@ int My::WindowsApplication::Init()
 	wc.hInstance = hInstance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	wc.lpszClassName = _T("3DEngine");
+	wc.lpszClassName = _T("GameEngineFromScratch");
 
 	// register the window class
 	RegisterClassEx(&wc);
 
 	// create the window and use the result as the handle
-	hWnd = CreateWindowExW(0,
-		L"3DEngine",      // name of the window class
-		m_Config.appName,             // title of the window
+	m_hWnd = CreateWindowEx(0,
+		_T("GameEngineFromScratch"),      // name of the window class
+		m_Config.appName,                 // title of the window
 		WS_OVERLAPPEDWINDOW,              // window style
 		CW_USEDEFAULT,                    // x-position of the window
 		CW_USEDEFAULT,                    // y-position of the window
@@ -49,21 +40,35 @@ int My::WindowsApplication::Init()
 		hInstance,                        // application handle
 		this);                            // pass pointer to current object
 
-
 										  // display the window on the screen
-	ShowWindow(hWnd, SW_SHOW);
+	ShowWindow(m_hWnd, SW_SHOW);
 
-	m_hWnd = hWnd;
+}
+
+int WindowsApplication::Init()
+{
+	int result;
+
+	CreateMainWindow();
+
+	// first call base class initialization
+	result = BaseApplication::Init();
+
+	if (result != 0)
+		exit(result);
 
 	return result;
 }
 
-void My::WindowsApplication::Destroy()
+void WindowsApplication::Destroy()
 {
+	BaseApplication::Destroy();
 }
 
-void My::WindowsApplication::Update()
+void WindowsApplication::Update()
 {
+	BaseApplication::Update();
+
 	// this struct holds Windows event messages
 	MSG msg;
 
@@ -80,7 +85,7 @@ void My::WindowsApplication::Update()
 }
 
 // this is the main message handler for the program
-LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowsApplication::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	WindowsApplication* pThis;
 	if (message == WM_NCCREATE)
@@ -107,10 +112,52 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
 		g_pApp->OnDraw();
 	}
 	break;
+	case WM_KEYUP:
+	{
+		switch (wParam)
+		{
+		case VK_LEFT:
+			g_pInputManager->LeftArrowKeyUp();
+			break;
+		case VK_RIGHT:
+			g_pInputManager->RightArrowKeyUp();
+			break;
+		case VK_UP:
+			g_pInputManager->UpArrowKeyUp();
+			break;
+		case VK_DOWN:
+			g_pInputManager->DownArrowKeyUp();
+			break;
+		case 0x52: // R Key
+			g_pInputManager->ResetKeyUp();
+			break;
+		default:
+			break;
+		}
+	}
+	break;
 	case WM_KEYDOWN:
 	{
-		// we will replace this with input manager
-		m_bQuit = true;
+		switch (wParam)
+		{
+		case VK_LEFT:
+			g_pInputManager->LeftArrowKeyDown();
+			break;
+		case VK_RIGHT:
+			g_pInputManager->RightArrowKeyDown();
+			break;
+		case VK_UP:
+			g_pInputManager->UpArrowKeyDown();
+			break;
+		case VK_DOWN:
+			g_pInputManager->DownArrowKeyDown();
+			break;
+		case 0x52: // R Key
+			g_pInputManager->ResetKeyDown();
+			break;
+		default:
+			break;
+		}
 	}
 	break;
 
@@ -120,10 +167,11 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
 		// close the application entirely
 		PostQuitMessage(0);
 		m_bQuit = true;
-		return 0;
 	}
 	}
 
 	// Handle any messages the switch statement didn't
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
+
+

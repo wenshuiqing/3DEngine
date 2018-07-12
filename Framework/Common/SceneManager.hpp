@@ -18,11 +18,17 @@ namespace My {
 
 		const Scene& GetSceneForRendering();
 
+		void ResetScene();
+
+		bool IsSceneChanged();
+		void NotifySceneIsRenderingQueued();
+
 	protected:
 		bool LoadOgexScene(const char* ogex_scene_file_name);
 
 	protected:
-		std::unique_ptr<Scene>  m_pScene;
+		std::shared_ptr<Scene>  m_pScene;
+		bool m_bDirtyFlag = false;
 	};
 
 	extern SceneManager*    g_pSceneManager;

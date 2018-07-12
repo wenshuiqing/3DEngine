@@ -10,6 +10,9 @@
 #include "geommath.hpp"
 #include "AssetLoader.hpp"
 #include "JPEG.hpp"
+#include "TGA.hpp"
+#include "bmp.hpp"
+#include "PNG.hpp"
 
 namespace My {
 	ENUM(SceneObjectType) {
@@ -311,8 +314,27 @@ namespace My {
 			if (!m_pImage)
 			{
 				Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary(m_Name.c_str());
-				JfifParser jfif_parser;
-				m_pImage = std::make_shared<Image>(jfif_parser.Parser(buf));
+				std::string ext = m_Name.substr(m_Name.find_last_of("."));
+				if (ext == ".jpg" || ext == ".jpeg")
+				{
+					JfifParser jfif_parser;
+					m_pImage = std::make_shared<Image>(jfif_parser.Parser(buf));
+				}
+				else if (ext == ".png")
+				{
+					PngParser png_parser;
+					m_pImage = std::make_shared<Image>(png_parser.Parser(buf));
+				}
+				else if (ext == ".bmp")
+				{
+					BmpParser bmp_parser;
+					m_pImage = std::make_shared<Image>(bmp_parser.Parser(buf));
+				}
+				else if (ext == ".tga")
+				{
+					TgaParser tga_parser;
+					m_pImage = std::make_shared<Image>(tga_parser.Parser(buf));
+				}
 			}
 
 			return *m_pImage;

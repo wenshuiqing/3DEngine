@@ -4,6 +4,8 @@
 #include "MemoryManager.hpp"
 #include "AssetLoader.hpp"
 #include "SceneManager.hpp"
+#include "InputManager.hpp"
+//#include "PhysicsManager.hpp"
 
 namespace My {
 	class BaseApplication : implements IApplication
@@ -20,6 +22,8 @@ namespace My {
 		virtual bool IsQuit();
 
 		inline GfxConfiguration& GetConfiguration() { return m_Config; };
+
+		virtual int LoadScene();
 
 		virtual void OnDraw() {};
 

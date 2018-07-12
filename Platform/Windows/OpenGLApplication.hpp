@@ -12,7 +12,7 @@ namespace My {
         virtual void Update();
 
     private:
-		HDC   m_hDC;
+        HDC   m_hDC;
         HGLRC m_RenderContext;
     };
 }
