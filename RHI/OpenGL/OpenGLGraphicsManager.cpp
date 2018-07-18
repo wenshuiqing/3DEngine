@@ -3,7 +3,8 @@
 #include "OpenGLGraphicsManager.hpp"
 #include "AssetLoader.hpp"
 #include "IApplication.hpp"
-//#include "PhysicsManager.hpp"
+#include "SceneManager.hpp"
+#include "PhysicsManager.hpp"
 
 const char VS_SHADER_SOURCE_FILE[] = "Shaders/basic_vs.glsl";
 const char PS_SHADER_SOURCE_FILE[] = "Shaders/basic_ps.glsl";
@@ -496,7 +497,7 @@ void OpenGLGraphicsManager::RenderBuffers()
 
 		Matrix4X4f trans = *dbc.node->GetCalculatedTransform();
 
-		/*if (void* rigidBody = dbc.node->RigidBody()) {
+		if (void* rigidBody = dbc.node->RigidBody()) {
 			// the geometry has rigid body bounded, we blend the simlation result here.
 			Matrix4X4f simulated_result = g_pPhysicsManager->GetRigidBodyTransform(rigidBody);
 
@@ -514,7 +515,7 @@ void OpenGLGraphicsManager::RenderBuffers()
 			// replace the translation part of the matrix with simlation result directly
 			memcpy(trans[3], simulated_result[3], sizeof(float) * 3);
 
-		}*/
+		}
 
 		SetPerBatchShaderParameters("modelMatrix", trans);
 		glBindVertexArray(dbc.vao);

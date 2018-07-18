@@ -16,12 +16,12 @@ namespace My {
 
 		int LoadScene(const char* scene_file_name);
 
+		bool IsSceneChanged();
+		void NotifySceneIsRenderingQueued();
+
 		const Scene& GetSceneForRendering();
 
 		void ResetScene();
-
-		bool IsSceneChanged();
-		void NotifySceneIsRenderingQueued();
 
 	protected:
 		bool LoadOgexScene(const char* ogex_scene_file_name);

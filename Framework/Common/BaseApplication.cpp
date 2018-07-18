@@ -53,12 +53,12 @@ int BaseApplication::Init()
 	}
 	cerr << "Success" << endl;
 
-	/*cerr << "Initialize Physics Manager: ";
+	cerr << "Initialize Physics Manager: ";
 	if ((ret = g_pPhysicsManager->Init()) != 0) {
 		cerr << "Failed. err = " << ret;
 		return ret;
 	}
-	cerr << "Success" << endl;*/
+	cerr << "Success" << endl;
 
 	return ret;
 }
@@ -68,7 +68,7 @@ void BaseApplication::Destroy()
 {
 	g_pInputManager->Destroy();
 	g_pGraphicsManager->Destroy();
-	//g_pPhysicsManager->Destroy();
+	g_pPhysicsManager->Destroy();
 	g_pSceneManager->Destroy();
 	g_pAssetLoader->Destroy();
 	g_pMemoryManager->Destroy();
@@ -82,7 +82,7 @@ void BaseApplication::Update()
 	g_pAssetLoader->Update();
 	g_pSceneManager->Update();
 	g_pInputManager->Update();
-	//g_pPhysicsManager->Update();
+	g_pPhysicsManager->Update();
 	g_pGraphicsManager->Update();
 }
 

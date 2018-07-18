@@ -10,9 +10,9 @@
 #include "geommath.hpp"
 #include "AssetLoader.hpp"
 #include "JPEG.hpp"
-#include "TGA.hpp"
-#include "bmp.hpp"
 #include "PNG.hpp"
+#include "bmp.hpp"
+#include "TGA.hpp"
 
 namespace My {
 	ENUM(SceneObjectType) {
@@ -26,6 +26,21 @@ namespace My {
 			kSceneObjectTypeVertexArray = "VARR"_i32,
 			kSceneObjectTypeIndexArray = "VARR"_i32,
 			kSceneObjectTypeGeometry = "GEOM"_i32,
+	};
+
+	ENUM(SceneObjectCollisionType) {
+		kSceneObjectCollisionTypeNone = "CNON"_i32,
+			kSceneObjectCollisionTypeSphere = "CSPH"_i32,
+			kSceneObjectCollisionTypeBox = "CBOX"_i32,
+			kSceneObjectCollisionTypeCylinder = "CCYL"_i32,
+			kSceneObjectCollisionTypeCapsule = "CCAP"_i32,
+			kSceneObjectCollisionTypeCone = "CCON"_i32,
+			kSceneObjectCollisionTypeMultiSphere = "CMUL"_i32,
+			kSceneObjectCollisionTypeConvexHull = "CCVH"_i32,
+			kSceneObjectCollisionTypeConvexMesh = "CCVM"_i32,
+			kSceneObjectCollisionTypeBvhMesh = "CBVM"_i32,
+			kSceneObjectCollisionTypeHeightfield = "CHIG"_i32,
+			kSceneObjectCollisionTypePlane = "CPLN"_i32,
 	};
 
 	std::ostream& operator<<(std::ostream& out, SceneObjectType type);
@@ -249,20 +264,13 @@ namespace My {
 		std::vector<SceneObjectVertexArray> m_VertexArray;
 		PrimitiveType	m_PrimitiveType;
 
-		bool        m_bVisible;
-		bool        m_bShadow;
-		bool        m_bMotionBlur;
-
 	public:
-		SceneObjectMesh(bool visible = true, bool shadow = true, bool motion_blur = true) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMesh), m_bVisible(visible), m_bShadow(shadow), m_bMotionBlur(motion_blur) {};
+		SceneObjectMesh(bool visible = true, bool shadow = true, bool motion_blur = true) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMesh) {};
 		SceneObjectMesh(SceneObjectMesh&& mesh)
 			: BaseSceneObject(SceneObjectType::kSceneObjectTypeMesh),
 			m_IndexArray(std::move(mesh.m_IndexArray)),
 			m_VertexArray(std::move(mesh.m_VertexArray)),
-			m_PrimitiveType(mesh.m_PrimitiveType),
-			m_bVisible(mesh.m_bVisible),
-			m_bShadow(mesh.m_bShadow),
-			m_bMotionBlur(mesh.m_bMotionBlur)
+			m_PrimitiveType(mesh.m_PrimitiveType)
 		{
 		};
 		void AddIndexArray(SceneObjectIndexArray&& array) { m_IndexArray.push_back(std::move(array)); };
@@ -305,15 +313,6 @@ namespace My {
 				// we should lookup if the texture has been loaded already to prevent
 				// duplicated load. This could be done in Asset Loader Manager.
 				Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary(m_Name.c_str());
-				JfifParser jfif_parser;
-				m_pImage = std::make_shared<Image>(jfif_parser.Parser(buf));
-			}
-		}
-		const Image& GetTextureImage()
-		{
-			if (!m_pImage)
-			{
-				Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary(m_Name.c_str());
 				std::string ext = m_Name.substr(m_Name.find_last_of("."));
 				if (ext == ".jpg" || ext == ".jpeg")
 				{
@@ -335,6 +334,14 @@ namespace My {
 					TgaParser tga_parser;
 					m_pImage = std::make_shared<Image>(tga_parser.Parser(buf));
 				}
+			}
+		}
+
+		const Image& GetTextureImage()
+		{
+			if (!m_pImage)
+			{
+				LoadTexture();
 			}
 
 			return *m_pImage;
@@ -541,9 +548,10 @@ namespace My {
 		bool        m_bVisible;
 		bool        m_bShadow;
 		bool        m_bMotionBlur;
+		SceneObjectCollisionType m_CollisionType;
 
 	public:
-		SceneObjectGeometry(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeGeometry) {};
+		SceneObjectGeometry(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeGeometry), m_CollisionType(SceneObjectCollisionType::kSceneObjectCollisionTypeNone) {};
 
 		void SetVisibility(bool visible) { m_bVisible = visible; };
 		const bool Visible() { return m_bVisible; };
@@ -551,6 +559,8 @@ namespace My {
 		const bool CastShadow() { return m_bShadow; };
 		void SetIfMotionBlur(bool motion_blur) { m_bMotionBlur = motion_blur; };
 		const bool MotionBlur() { return m_bMotionBlur; };
+		void SetCollisionType(SceneObjectCollisionType collision_type) { m_CollisionType = collision_type; };
+		const SceneObjectCollisionType CollisionType() const { return  m_CollisionType; }
 
 		void AddMesh(std::shared_ptr<SceneObjectMesh>& mesh) { m_Mesh.push_back(std::move(mesh)); };
 		const std::weak_ptr<SceneObjectMesh> GetMesh() { return (m_Mesh.empty() ? nullptr : m_Mesh[0]); };

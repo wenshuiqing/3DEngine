@@ -5,7 +5,7 @@
 #include "AssetLoader.hpp"
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
-//#include "PhysicsManager.hpp"
+#include "PhysicsManager.hpp"
 
 namespace My {
 	class BaseApplication : implements IApplication

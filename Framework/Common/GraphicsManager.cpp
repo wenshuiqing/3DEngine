@@ -3,6 +3,7 @@
 #include "SceneManager.hpp"
 #include "cbuffer.h"
 #include "IApplication.hpp"
+#include "SceneManager.hpp"
 
 using namespace My;
 using namespace std;
@@ -23,16 +24,16 @@ void GraphicsManager::Update()
 	if (g_pSceneManager->IsSceneChanged())
 	{
 		cout << "Detected Scene Change, reinitialize Graphics Manager..." << endl;
-		this->Destroy();
-		this->Init();
+		Destroy();
+		Init();
 		g_pSceneManager->NotifySceneIsRenderingQueued();
 	}
 	// Generate the view matrix based on the camera's position.
 	CalculateCameraMatrix();
 	CalculateLights();
 
-	this->Clear();
-	this->Draw();
+	Clear();
+	Draw();
 }
 
 void GraphicsManager::Clear()
@@ -101,7 +102,7 @@ void GraphicsManager::CalculateCameraMatrix()
 	auto pCameraNode = scene.GetFirstCameraNode();
 	if (pCameraNode) {
 		m_DrawFrameContext.m_viewMatrix = *pCameraNode->GetCalculatedTransform();
-		m_DrawFrameContext.m_viewMatrix = InverseMatrix4X4f(m_DrawFrameContext.m_viewMatrix);
+		InverseMatrix4X4f(m_DrawFrameContext.m_viewMatrix);
 	}
 	else {
 		// use default build-in camera
